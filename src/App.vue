@@ -8,7 +8,7 @@
     <el-button type="info" round>信息按钮</el-button>
     <el-button type="warning" round>警告按钮</el-button>
     <el-button type="danger" round>危险按钮</el-button>
-    <button @click="goSon">点击到son</button>
+    <button @click="goSon">点击到login</button>
     <router-view></router-view>
     <router-link to="/">到首页</router-link>
   </div>
@@ -24,7 +24,7 @@ export default {
   //方法
   methods: {
     goSon() {
-      this.$router.push("/son");
+      this.$router.push("/login");
     }
   },
   //计算属性

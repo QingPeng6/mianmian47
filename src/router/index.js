@@ -2,8 +2,8 @@
 import Vue from 'vue'
 
 // 0. 导入 子组件
-import son from '../components/son.vue'
 import bb from '../components/bb.vue'
+import login from '../views/login/index.vue'
 // 1. 导入 vue-router
 import VueRouter from 'vue-router'
 //解决同一页面多次访问错误
@@ -17,8 +17,8 @@ Vue.use(VueRouter)
 const router = new VueRouter({
     //这里就是路由的配制项
     routes: [{
-        path: '/son', //配置地址
-        component: son //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
+        path: '/login', //配置地址
+        component: login //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
     }, {
         path: '/', //配置地址
         component: bb //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
