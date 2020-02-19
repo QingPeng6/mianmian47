@@ -1,5 +1,5 @@
 <template>
-  <div>成功</div>
+  <div>成功阿萨德</div>
 </template>
 
 <script>
