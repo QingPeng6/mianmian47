@@ -10,6 +10,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
 
+//导入样式
+import './style/base.css'
 
 
 Vue.config.productionTip = false
