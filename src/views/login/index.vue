@@ -44,7 +44,8 @@
             </el-col>
 
             <el-col :span="7">
-              <img src="./login_captcha.png" alt />
+              <!-- 设置双向绑定img的src -->
+              <img :src="imgURL" class="captcha" alt ref="captcha" @click="getRandomCode" />
             </el-col>
           </el-row>
         </el-form-item>
@@ -78,6 +79,7 @@ export default {
   //数据
   data() {
     return {
+      imgURL: "http://127.0.0.1/heimamm/public/captcha?type=login", //img的路径
       //跟表单双向绑定的内容
       form: {
         pass: "",
@@ -120,6 +122,12 @@ export default {
   },
   //方法/
   methods: {
+    getRandomCode() {
+      // 时间戳
+      this.imgURL = `http://127.0.0.1/heimamm/public/captcha?type=login&${Date.now()}`;
+      // 随机数
+      // this.$refs.captcha.src=`http://127.0.0.1/heimamm/public/captcha?type=login&${Math.random()}`
+    },
     resetForm() {
       // 把form表单 规则给全部判断一次,如果规则正确,v就是true,如果有一项不正确,就是false
       this.$refs.form.validate(v => {
