@@ -1,7 +1,12 @@
 <template>
   <div>
     <!-- center属性写上 就让那一行居中 / width设置宽度 -->
-    <el-dialog title="用户注册" center width="603px" :visible.sync="dialogFormVisible">
+    <el-dialog
+      title="用户注册"
+      center
+      width="603px"
+      :visible.sync="dialogFormVisible"
+    >
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="昵称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -15,7 +20,11 @@
           <el-input v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="密码" :label-width="formLabelWidth" prop="passWord">
+        <el-form-item
+          label="密码"
+          :label-width="formLabelWidth"
+          prop="passWord"
+        >
           <el-input v-model="form.passWord" autocomplete="off"></el-input>
         </el-form-item>
 
@@ -24,7 +33,7 @@
             <el-input v-model="form.code" autocomplete="off"></el-input>
           </el-col>
           <el-col :span="7" :offset="1">
-            <img :src="imgURL" alt class="imgs"  @click="getImg"/>
+            <img :src="imgURL" alt class="imgs" @click="getImg" />
           </el-col>
         </el-form-item>
 
@@ -33,24 +42,31 @@
             <el-input v-model="form.ycode" autocomplete="off"></el-input>
           </el-col>
           <el-col :span="7" :offset="1">
-            <el-button @click="get">获取用户验证码</el-button>
+            <!-- disabled控制按钮是否禁用 ,如果sec!=0,就是true,就是不禁用 /false的时候就是禁用当前按钮 -->
+            <el-button :disabled="sec != 0" @click="getCode">{{
+              sec == 0 ? "获取用户验证码" : "还剩" + sec + "秒"
+            }}</el-button>
           </el-col>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+// import axios from "axios";
 export default {
   props: {},
   //数据
   data() {
     return {
+      sec: 0, //获取验证码的时间
       //控制注册框显示隐藏
       dialogFormVisible: false,
       //验证码图片
@@ -119,10 +135,32 @@ export default {
   },
   //方法
   methods: {
-      //更换图形验证码
-    getImg(){
+    //更换图形验证码
+    getImg() {
       //重新给服务器发送请求获取验证码
-      this.imgURL = process.env.VUE_APP_picURL + "/captcha?type=sendsms&sb="+Date.now() // 时间戳Date.now()
+      this.imgURL =
+        process.env.VUE_APP_picURL + "/captcha?type=sendsms&sb=" + Date.now(); // 时间戳Date.now()
+    },
+    getCode() {
+      this.sec = 60; //把获取验证码的时间改成60秒
+      //设置定时器,60秒--,当60秒过后,定时器停止
+      let cTime = setInterval(() => {
+        this.sec--;
+        if (this.sec == 0) {
+          clearInterval(cTime);
+        }
+      }, 100);
+
+      this.$axios({
+        url: "/sendsms",
+        method: "post",
+        data: { code: this.form.code, phone: this.form.phone },
+        withCredentials: true
+      }).then(res => {
+        //成功回调
+        console.log(res);
+        alert(res.data.message);
+      });
     }
   },
   //计算属性
@@ -134,16 +172,13 @@ export default {
     console.log(process.env.VUE_APP_picURL);
   },
   //渲染页面后执行的生命周期,不能访问dom
-  mounted() {
-  
-  },
+  mounted() {},
   //侦听器
   watch: {
     //监听注册表单的显示与隐藏，只要发生改变就重置表单
     // 'dialogFormVisible'() {
     //   this.$refs.form.resetFields();
     //   console.log('123');
-      
     // }
   },
   //子页面
