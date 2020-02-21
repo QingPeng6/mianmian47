@@ -68,12 +68,16 @@
         </el-form-item>
       </el-form>
     </div>
+    <!-- 注册框 -->
+    <reg></reg>
     <!-- 右侧图片 -->
     <img src="./背景.png" alt />
   </div>
 </template>
 
 <script>
+//导入子组件reg
+import reg from "./components/register";
 export default {
   props: {},
   //数据
@@ -151,7 +155,9 @@ export default {
   //侦听器
   watch: {},
   //子页面
-  components: {}
+  components: {
+    reg
+  }
 };
 </script>
 
