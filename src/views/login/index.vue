@@ -64,12 +64,12 @@
         <el-form-item class="btn-box">
           <el-button type="primary" @click="resetForm">登录</el-button>
           <br />
-          <el-button type="primary">注册</el-button>
+          <el-button type="primary" @click="showReg">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
     <!-- 注册框 -->
-    <reg></reg>
+    <reg ref="reg"></reg>
     <!-- 右侧图片 -->
     <img src="./背景.png" alt />
   </div>
@@ -83,7 +83,7 @@ export default {
   //数据
   data() {
     return {
-      imgURL: "http://127.0.0.1/heimamm/public/captcha?type=login", //img的路径
+      imgURL:  process.env.VUE_APP_picURL + "/captcha?type=sendsms", //img的路径
       //跟表单双向绑定的内容
       form: {
         pass: "",
@@ -142,6 +142,11 @@ export default {
           return false;
         }
       });
+    },
+    //注册的点击事件
+    showReg() {
+      //找到子组件reg的dialogFormVisible属性，设置为true  /就控制了对话框的显示
+      this.$refs.reg.dialogFormVisible = true;
     }
   },
   //计算属性
