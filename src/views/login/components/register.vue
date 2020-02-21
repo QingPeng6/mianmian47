@@ -1,15 +1,40 @@
 <template>
   <div>
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+    <!-- center属性写上 就让那一行居中 / width设置宽度 -->
+    <el-dialog title="用户注册" center width="603px" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="活动名称" :label-width="formLabelWidth">
+        <el-form-item label="昵称" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="活动区域" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
+
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="手机" :label-width="formLabelWidth">
+          <el-input v-model="form.phone" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" :label-width="formLabelWidth">
+          <el-input v-model="form.passWord" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="图形码" :label-width="formLabelWidth">
+          <el-col :span="16">
+            <el-input v-model="form.code" autocomplete="off"></el-input>
+          </el-col>
+          <el-col :span="7" :offset="1">
+            <img src="../login_captcha.png" alt class="imgs" />
+          </el-col>
+        </el-form-item>
+
+        <el-form-item label="验证码" :label-width="formLabelWidth">
+          <el-col :span="16">
+            <el-input v-model="form.ycode" autocomplete="off"></el-input>
+          </el-col>
+          <el-col :span="7" :offset="1">
+            <el-button>获取用户验证码</el-button>
+          </el-col>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -37,7 +62,7 @@ export default {
         resource: "",
         desc: ""
       },
-      formLabelWidth: "120px"
+      formLabelWidth: "60px"
     };
   },
   //方法
@@ -57,5 +82,17 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+.imgs {
+  height: 41px;
+  width: 100%;
+}
+
+.el-dialog__header {
+  background: linear-gradient(to right, #00afee, #1791fd);
+  .el-dialog__title {
+    color: white !important;
+    font-size: 17px;
+  }
+}
 </style>
