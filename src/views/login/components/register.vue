@@ -69,7 +69,7 @@ export default {
       sec: 0, //获取验证码的时间
       //控制注册框显示隐藏
       dialogFormVisible: false,
-      //验证码图片
+      //验证码图片 调用环境变量
       imgURL: process.env.VUE_APP_picURL + "/captcha?type=sendsms",
       //表单的左边文字距离
       formLabelWidth: "80px",
@@ -151,6 +151,7 @@ export default {
         }
       }, 100);
 
+      //获取手机验证码
       this.$axios({
         url: "/sendsms",
         method: "post",

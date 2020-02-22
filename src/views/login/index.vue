@@ -45,7 +45,13 @@
 
             <el-col :span="7">
               <!-- 设置双向绑定img的src -->
-              <img :src="imgURL" class="captcha" alt ref="captcha" @click="getRandomCode" />
+              <img
+                :src="imgURL"
+                class="captcha"
+                alt
+                ref="captcha"
+                @click="getRandomCode"
+              />
             </el-col>
           </el-row>
         </el-form-item>
@@ -83,7 +89,7 @@ export default {
   //数据
   data() {
     return {
-      imgURL:  process.env.VUE_APP_picURL + "/captcha?type=sendsms", //img的路径
+      imgURL: process.env.VUE_APP_picURL + "/captcha?type=sendsms", //img的路径
       //跟表单双向绑定的内容
       form: {
         pass: "",
@@ -128,7 +134,8 @@ export default {
   methods: {
     getRandomCode() {
       // 时间戳
-      this.imgURL = `http://127.0.0.1/heimamm/public/captcha?type=login&${Date.now()}`;
+      this.imgURL =
+        process.env.VUE_APP_picURL + `/captcha?type=login&${Date.now()}`;
       // 随机数
       // this.$refs.captcha.src=`http://127.0.0.1/heimamm/public/captcha?type=login&${Math.random()}`
     },
