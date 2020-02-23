@@ -1,5 +1,5 @@
 <template>
-  <div>我是bb页面</div>
+  <div>成功</div>
 </template>
 
 <script>

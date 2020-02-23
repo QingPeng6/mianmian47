@@ -82,6 +82,8 @@
 </template>
 
 <script>
+//导入登录接口方法
+import { get_login } from "@/api/login.js";
 //导入子组件reg
 import reg from "./components/register";
 export default {
@@ -89,7 +91,7 @@ export default {
   //数据
   data() {
     return {
-      imgURL: process.env.VUE_APP_URL + "/captcha?type=sendsms", //img的路径
+      imgURL: process.env.VUE_APP_URL + "/captcha?type=login", //img的路径
       //跟表单双向绑定的内容
       form: {
         pass: "",
@@ -102,9 +104,14 @@ export default {
         //手机号验证
         phone: [
           //required:true (必须输入内容) ,如果内容为空就显示 (message) , trigger: "blur"(在失去焦点的时候判断)
-          { required: true, message: "请输入手机号码", trigger: "blur" },
-          //min: 3, max: 5 (最小3位,最大5位) ,如果内容不符合要求就显示 (message) , trigger: "blur"(在失去焦点的时候判断)
-          { min: 3, max: 18, message: "长度在 3 到 18 个字符", trigger: "blur" }
+          { required: true, message: "请输入您的手机号码", trigger: "blur" },
+          {
+            //pattern就是数据的值,判断数据的值包含
+            pattern: /0?(13|14|15|18|17)[0-9]{9}/,
+            message: "手机号输入错误",
+            //  trigger: "change"(在值改变的的时候判断)
+            trigger: "blur"
+          }
         ],
         //密码验证
         pass: [
@@ -115,7 +122,10 @@ export default {
         ],
         code: [
           //required:true (必须输入内容) ,如果内容为空就显示 (message) , trigger: "blur"(在失去焦点的时候判断)
-          { required: true, message: "请输入验证码", trigger: "blur" }
+          // { required: true, message: "请输入验证码", trigger: "blur" },
+          // { len: 4, message: "请输入正确的验证码", trigger: "blur" }
+          { required: true, message: "请输入右边的图形码", trigger: "blur" },
+          { len: 4, message: "图形验证码是4位数", trigger: "blur" }
         ],
         checked: [
           {
@@ -142,10 +152,29 @@ export default {
     resetForm() {
       // 把form表单 规则给全部判断一次,如果规则正确,v就是true,如果有一项不正确,就是false
       this.$refs.form.validate(v => {
+        //全部验证成功就获取登录axios
         if (v) {
-          alert("提交成功!");
+          // alert("提交成功!");
+          get_login({
+            phone: this.form.phone,
+            password: this.form.pass,
+            code: this.form.code
+          }).then(res => {
+            console.log("登录提示:", res);
+            this.getRandomCode();
+
+            if (res.data.code == 200) {
+              //成功以后把token存起来
+              window.localStorage.setItem('token',res.data.data.token)
+              this.$message("登录成功");
+            } else {
+              this.$message(res.data.message);
+            }
+          });
         } else {
           console.log("提交失败,至少有一项填的不标准");
+          this.getRandomCode();
+          this.$message.warning("提交失败,至少有一项填的不标准");
           return false;
         }
       });

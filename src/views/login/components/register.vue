@@ -84,7 +84,7 @@
 
 <script>
 //接收获取短息验证码方法
-import { get_node, get_register } from "../../../api/index.js";
+import { get_node, get_register } from "@/api/register.js";
 // import axios from "axios";
 export default {
   props: {},
