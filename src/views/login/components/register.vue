@@ -8,6 +8,26 @@
       :visible.sync="dialogFormVisible"
     >
       <el-form :model="form" :rules="rules" ref="form">
+        <el-form-item label="头像" :label-width="formLabelWidth" prop="pic">
+          <!-- 头像上传 
+          :show-file-list="false" 是否显示图片名
+          :on-success="handleAvatarSuccess" 上传成功调用的函数方法
+          :before-upload="beforeAvatarUpload" 上传之前调用的函数方法
+          
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i> 我们看到的+号
+          -->
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
+
         <el-form-item label="昵称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
@@ -55,11 +75,17 @@
           >确 定</el-button
         >
       </div>
+      <!-- <el-button  @click="open2">成功</el-button>
+      <el-button  @click="open3">警告</el-button>
+      <el-button  @click="open1">消息</el-button>
+      <el-button  @click="open4">错误</el-button> -->
     </el-dialog>
   </div>
 </template>
 
 <script>
+//接收获取短息验证码方法
+import { get_node } from "../../../api/index.js";
 // import axios from "axios";
 export default {
   props: {},
@@ -73,6 +99,8 @@ export default {
       imgURL: process.env.VUE_APP_picURL + "/captcha?type=sendsms",
       //表单的左边文字距离
       formLabelWidth: "80px",
+
+      imageUrl: "", //绑定头像图片
       form: {
         name: "",
         email: "",
@@ -142,6 +170,18 @@ export default {
         process.env.VUE_APP_picURL + "/captcha?type=sendsms&sb=" + Date.now(); // 时间戳Date.now()
     },
     getCode() {
+      //进行判断手机号是否输入正确
+      //如果输入错误就弹出提示框, return阻止后面的代码运行
+      if (!/0?(13|14|15|18|17)[0-9]{9}/.test(this.form.phone)) {
+        this.$message.error("手机号输入错误");
+        return;
+      }
+      //进行判断验证码格式是否输入正确
+      //如果输入错误就弹出提示框, return阻止后面的代码运行
+      if (this.form.code.length != 4) {
+        this.$message.error("验证码格式错误");
+        return;
+      }
       this.sec = 60; //把获取验证码的时间改成60秒
       //设置定时器,60秒--,当60秒过后,定时器停止
       let cTime = setInterval(() => {
@@ -152,17 +192,75 @@ export default {
       }, 100);
 
       //获取手机验证码
-      this.$axios({
-        url: "/sendsms",
-        method: "post",
-        data: { code: this.form.code, phone: this.form.phone },
-        withCredentials: true
-      }).then(res => {
+      // this.$axios({
+      //   url: "/sendsms",
+      //   method: "post",
+      //   data: { code: this.form.code, phone: this.form.phone },
+      //   withCredentials: true
+      // }).then(res => {
+      //   //成功回调
+      //   console.log(res);
+      //   // alert(res.data.message);
+      //   if (res.data.code == 200) {
+      //     //弹出成功提示框
+      //     this.$message.success(res.data.message);
+      //   } else {
+      //     //弹出失败提示框
+      //     this.$message.error(res.data.message);
+      //   }
+      // });
+
+      //获取短信验证码
+      get_node({ code: this.form.code, phone: this.form.phone }).then(res => {
         //成功回调
         console.log(res);
-        alert(res.data.message);
+        // alert(res.data.message);
+        if (res.data.code == 200) {
+          //弹出成功提示框
+          this.$message.success("获取到验证码是" + res.data.data.captcha);
+        } else {
+          //弹出失败提示框
+          this.$message.error(res.data.message);
+        }
       });
+    },
+    //把上传的文件做成临时url绑定给图片的src
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },    //在上传之前判断文件的格式是否合法,以及文件是否小于2M
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg"; //图片是不是jpg格式
+      const isLt2M = file.size / 1024 / 1024 < 2; //文件是否小于2M
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     }
+    // open1() {
+    //   this.$message("这是一条消息提示");
+    // },
+    // open2() {
+    //   this.$message({
+    //     message: "恭喜你，这是一条成功消息",
+    //     type: "success"
+    //   });
+    // },
+
+    // open3() {
+    //   this.$message({
+    //     message: "警告哦，这是一条警告消息",
+    //     type: "warning"
+    //   });
+    // },
+
+    // open4() {
+    // 代码的缩写
+    //   this.$message.error("错了哦，这是一条错误消息");
+    // }
   },
   //计算属性
   computed: {},
@@ -199,5 +297,33 @@ export default {
     color: white !important;
     font-size: 17px;
   }
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px !important ;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+.avatar-uploader {
+  text-align: center;
+  padding-right: 50px;
 }
 </style>
