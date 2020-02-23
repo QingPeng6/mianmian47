@@ -17,8 +17,9 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i> 我们看到的+号
           -->
           <el-upload
+            name="image"
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="picU"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -70,10 +71,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button @click="clearC">取 消</el-button>
+        <el-button type="primary" @click="goYZ">确 定</el-button>
       </div>
       <!-- <el-button  @click="open2">成功</el-button>
       <el-button  @click="open3">警告</el-button>
@@ -85,7 +84,7 @@
 
 <script>
 //接收获取短息验证码方法
-import { get_node } from "../../../api/index.js";
+import { get_node, get_register } from "../../../api/index.js";
 // import axios from "axios";
 export default {
   props: {},
@@ -96,20 +95,23 @@ export default {
       //控制注册框显示隐藏
       dialogFormVisible: false,
       //验证码图片 调用环境变量
-      imgURL: process.env.VUE_APP_picURL + "/captcha?type=sendsms",
+      imgURL: process.env.VUE_APP_URL + "/captcha?type=sendsms",
       //表单的左边文字距离
       formLabelWidth: "80px",
+      picU: process.env.VUE_APP_URL + "/uploads", //头像路径接口
 
       imageUrl: "", //绑定头像图片
       form: {
-        name: "",
-        email: "",
-        phone: "",
-        passWord: "",
-        code: "",
-        ycode: ""
+        pic: "", //头像
+        name: "", //用户名
+        email: "", //邮箱
+        phone: "", //手机
+        passWord: "", //密码
+        code: "", //图形码
+        ycode: "" //手机验证码
       },
       rules: {
+        pic: [{ required: true, message: "请选择你的头像", trigger: "blur" }],
         name: [
           //required:true (必须输入内容) ,如果内容为空就显示 (message) , trigger: "blur"(在失去焦点的时候判断)
           { required: true, message: "请输入您的昵称", trigger: "blur" }
@@ -148,13 +150,19 @@ export default {
         ],
         code: [
           //required:true (必须输入内容) ,如果内容为空就显示 (message) , trigger: "blur"(在失去焦点的时候判断)
-          { required: true, message: "请输入右边的图形码", trigger: "blur" }
+          { required: true, message: "请输入右边的图形码", trigger: "blur" },
+          { len: 4, message: "图形验证码是4位数", trigger: "blur" }
         ],
         ycode: [
           //required:true (必须输入内容) ,如果内容为空就显示 (message) , trigger: "blur"(在失去焦点的时候判断)
           {
             required: true,
             message: "请输入获取到的手机验证码",
+            trigger: "blur"
+          },
+          {
+            len: 4,
+            message: "手机验证码是4位数",
             trigger: "blur"
           }
         ]
@@ -163,11 +171,58 @@ export default {
   },
   //方法
   methods: {
+    //提交注册按钮点击事件
+    goYZ() {
+      this.$refs.form.validate(v => {
+        if (v) {
+          // alert("提交成功!");
+          //全部成功的话就发送axios请求
+          get_register({
+            username: this.form.name,
+            phone: this.form.phone,
+            email: this.form.email,
+            avatar: this.form.pic,
+            password: this.form.passWord,
+            rcode: this.form.ycode
+          }).then(res => {
+            console.log("注册后返回:", res);
+            if (res.data.code == 200) {
+              this.$message.success("你已经注册成功");
+              //注册成功后关闭表单
+              this.dialogFormVisible = false;
+              //清空表单
+              this.$refs.form.resetFields();
+              //清空表单不会清空表单外的img路径,需要手动清空
+              this.imageUrl = "";
+              //重新给服务器发送请求获取验证码
+              this.getImg();
+            } else {
+              this.$message.error("注册失败:" + res.data.message);
+            }
+          });
+        } else {
+          this.$message.warning("注册失败:请正确填写");
+          console.log("提交失败,至少有一项填的不标准");
+          return false;
+        }
+      });
+    },
+    //注册界面的取消 清空表单跟img图片路径
+    clearC() {
+      //注册成功后关闭表 单
+      this.dialogFormVisible = false;
+      //清空表单
+      this.$refs.form.resetFields();
+      //清空表单不会清空表单外的img路径,需要手动清空
+      this.imageUrl = "";
+      //重新给服务器发送请求获取验证码
+      this.getImg();
+    },
     //更换图形验证码
     getImg() {
       //重新给服务器发送请求获取验证码
       this.imgURL =
-        process.env.VUE_APP_picURL + "/captcha?type=sendsms&sb=" + Date.now(); // 时间戳Date.now()
+        process.env.VUE_APP_URL + "/captcha?type=sendsms&sb=" + Date.now(); // 时间戳Date.now()
     },
     getCode() {
       //进行判断手机号是否输入正确
@@ -213,7 +268,7 @@ export default {
       //获取短信验证码
       get_node({ code: this.form.code, phone: this.form.phone }).then(res => {
         //成功回调
-        console.log(res);
+        console.log("获取短信验证码:", res);
         // alert(res.data.message);
         if (res.data.code == 200) {
           //弹出成功提示框
@@ -226,14 +281,21 @@ export default {
     },
     //把上传的文件做成临时url绑定给图片的src
     handleAvatarSuccess(res, file) {
+      console.log("上传图片:", res);
       this.imageUrl = URL.createObjectURL(file.raw);
-    },    //在上传之前判断文件的格式是否合法,以及文件是否小于2M
+
+      //把form里面pic 赋值 服务器传过来的图片路径
+      this.form.pic = res.data.file_path;
+
+      //给表单里的图片单独做一次检验
+      this.$refs.form.validateField("pic");
+    }, //在上传之前判断文件的格式是否合法,以及文件是否小于2M
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg"; //图片是不是jpg格式
+      const isJPG = file.type === "image/jpeg" || "image/png" || "image/gif"; //图片是不是jpg格式
       const isLt2M = file.size / 1024 / 1024 < 2; //文件是否小于2M
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+        this.$message.error("上传头像图片只能是 图片 格式!");
       }
       if (!isLt2M) {
         this.$message.error("上传头像图片大小不能超过 2MB!");
@@ -268,7 +330,7 @@ export default {
   filters: {},
   //进入页面就执行的生命周期,可以访问dom
   created() {
-    console.log(process.env.VUE_APP_picURL);
+    // console.log(process.env.VUE_APP_URL);
   },
   //渲染页面后执行的生命周期,不能访问dom
   mounted() {},
@@ -289,6 +351,7 @@ export default {
 .imgs {
   height: 41px;
   width: 100%;
+  vertical-align: middle;
 }
 
 .el-dialog__header {

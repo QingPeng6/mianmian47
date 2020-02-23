@@ -89,7 +89,7 @@ export default {
   //数据
   data() {
     return {
-      imgURL: process.env.VUE_APP_picURL + "/captcha?type=sendsms", //img的路径
+      imgURL: process.env.VUE_APP_URL + "/captcha?type=sendsms", //img的路径
       //跟表单双向绑定的内容
       form: {
         pass: "",
@@ -135,7 +135,7 @@ export default {
     getRandomCode() {
       // 时间戳
       this.imgURL =
-        process.env.VUE_APP_picURL + `/captcha?type=login&${Date.now()}`;
+        process.env.VUE_APP_URL + `/captcha?type=login&${Date.now()}`;
       // 随机数
       // this.$refs.captcha.src=`http://127.0.0.1/heimamm/public/captcha?type=login&${Math.random()}`
     },

@@ -5,7 +5,18 @@ import axios from 'axios';
 export function get_node(data) {
     return axios({
         //地址
-        url: process.env.VUE_APP_picURL + "/sendsms",
+        url: process.env.VUE_APP_URL + "/sendsms",
+        method: 'post',
+        data,
+        withCredentials: true
+    })
+}
+
+//把注册方法封装抛出
+export function get_register(data) {
+    return axios({
+        //地址
+        url: process.env.VUE_APP_URL + "/register",
         method: 'post',
         data,
         withCredentials: true
