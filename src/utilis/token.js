@@ -7,7 +7,7 @@ const TOKENKEY = 'mmtoken'
 
 //取token方法
 export function getToken() {
-    return window.localStorage.setItem(TOKENKEY) //从window里面取出token
+    return window.localStorage.getItem(TOKENKEY) //从window里面取出token
 }
 
 //存token方法

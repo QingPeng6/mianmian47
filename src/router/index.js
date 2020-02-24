@@ -4,6 +4,7 @@ import Vue from 'vue'
 // 0. 导入 子组件
 import bb from '../components/bb.vue'
 import login from '../views/login/index.vue'
+import index from '../views/index/index.vue'
 // 1. 导入 vue-router
 import VueRouter from 'vue-router'
 //解决同一页面多次访问错误
@@ -22,6 +23,9 @@ const router = new VueRouter({
     }, {
         path: '/', //配置地址
         component: bb //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
+    },  {
+        path: '/index', //配置地址
+        component: index //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
     }, {
         //路由重定向:匹配不到的地址,让它跳转的地址
         path: '*', //匹配不到的地址
