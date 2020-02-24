@@ -1,10 +1,11 @@
+//!这是主页的index.vue
 <template>
   <el-container class="my-container">
     <el-header class="my-header">
       <div class="hed">
         <div class="left">
           <i
-            class="icon"
+            class="icon my_icon"
             @click="isCollapse = !isCollapse"
             :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
           ></i>
@@ -23,8 +24,12 @@
     <el-container>
       <el-aside width="auto" class="my-aside">
         <!-- :collapse="isCollapse" 属性控制侧边栏的折叠 -->
-        <el-menu :collapse="isCollapse" class="el-menu-vertical-demo">
-          <el-menu-item index="1">
+        <el-menu
+          :collapse="isCollapse"
+          default-active="1"
+          class="el-menu-vertical-demo"
+        >
+          <el-menu-item index="1" @click="go">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
           </el-menu-item>
@@ -49,7 +54,9 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main class="my-main">Main</el-main>
+      <el-main class="my-main">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -69,6 +76,10 @@ export default {
   },
   //方法
   methods: {
+    go() {
+      this.$router.push("/index/user");
+    },
+    //!退出用户登录
     outUser() {
       this.$confirm("此操作将退出用户登录, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -146,6 +157,9 @@ export default {
     .icon {
       font-size: 30px;
       margin-right: 15px;
+    }
+    .my_icon {
+      cursor: pointer !important;
     }
     .imgLOGO {
       margin-right: 11px;
