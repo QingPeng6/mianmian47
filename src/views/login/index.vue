@@ -166,7 +166,7 @@ export default {
             if (res.data.code == 200) {
               //成功以后把token存起来
               window.localStorage.setItem('token',res.data.data.token)
-              this.$message("登录成功");
+              this.$message.success("登录成功");
             } else {
               this.$message(res.data.message);
             }

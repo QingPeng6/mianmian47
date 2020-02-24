@@ -15,8 +15,11 @@
           :before-upload="beforeAvatarUpload" 上传之前调用的函数方法
           
             <i v-else class="el-icon-plus avatar-uploader-icon"></i> 我们看到的+号
+
+            name="image"
           -->
           <el-upload
+            v-model="form.pic"
             name="image"
             class="avatar-uploader"
             :action="picU"
@@ -87,6 +90,7 @@
 import { get_node, get_register } from "@/api/register.js";
 // import axios from "axios";
 export default {
+  name: 'qp',
   props: {},
   //数据
   data() {
@@ -173,6 +177,7 @@ export default {
   methods: {
     //提交注册按钮点击事件
     goYZ() {
+      //表单验证
       this.$refs.form.validate(v => {
         if (v) {
           // alert("提交成功!");
