@@ -44,3 +44,36 @@ const router = new VueRouter({
 
 // 4. 需要在main.js导入router  注入router
 export default router
+// import Vue from 'vue';
+
+// import VueRouter from 'vue-router';
+
+// Vue.use(VueRouter);
+
+/* 
+优势:组件使用时才加载，不使用时不加载，会对性能有些小优化/2.不用在写import
+ */
+
+// const router = new VueRouter({
+//     routes: [{
+//             path: "/login",
+//             component: login => {
+//                 require(['@/views/login/index.vue'], login)
+//             }
+//         },
+//         {
+//             path: "/index",
+//             component: index => {
+//                 require(['@/views/index/index.vue'], index);
+//             },
+//             children: [{
+//                 path: 'user',
+//                 component: user => {
+//                     require(['@/views/index/user/index.vue'], user)
+//                 }
+//             }]
+//         },
+//     ]
+// })
+
+// export default router

@@ -71,7 +71,7 @@ export default {
     return {
       userImg: "", //用户头像图片
       userName: "", //用户名
-      isCollapse: true
+      isCollapse: false
     };
   },
   //方法
