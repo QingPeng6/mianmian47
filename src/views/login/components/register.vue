@@ -37,11 +37,11 @@
         </el-form-item>
 
         <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
-          <el-input v-model="form.email" autocomplete="off"></el-input>
+          <el-input  clearable v-model="form.email" autocomplete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="手机" :label-width="formLabelWidth" prop="phone">
-          <el-input v-model="form.phone" autocomplete="off"></el-input>
+          <el-input  clearable v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
 
         <el-form-item
@@ -49,7 +49,11 @@
           :label-width="formLabelWidth"
           prop="passWord"
         >
-          <el-input v-model="form.passWord" autocomplete="off"></el-input>
+          <el-input
+            show-password
+            v-model="form.passWord"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="图形码" :label-width="formLabelWidth" prop="code">
@@ -90,7 +94,7 @@
 import { get_node, get_register } from "@/api/register.js";
 // import axios from "axios";
 export default {
-  name: 'qp',
+  name: "qp",
   props: {},
   //数据
   data() {

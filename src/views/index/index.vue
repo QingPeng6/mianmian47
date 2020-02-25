@@ -14,7 +14,7 @@
         </div>
         <div class="right">
           <img :src="userImg" alt="" class="imgUser" />
-          <span class="wanshan">{{ userName }},你好</span>
+          <span class="wanshan" v-text="userName"></span>
           <el-button type="primary" size="small" @click="outUser"
             >退出</el-button
           >
@@ -64,6 +64,7 @@
 
 <script>
 import { get_user, out_user } from "@/api/index.js";
+import { getToken } from "@/utilis/token.js";
 import { removeToken } from "@/utilis/token.js";
 export default {
   props: {},
@@ -126,6 +127,14 @@ export default {
   mounted() {},
   //侦听器
   watch: {},
+  //!页面一打开就执行的函数
+  beforeCreate() {
+    //*判断如果不能获取到token 就弹出请先登录,并跳转到登录页
+    if (!getToken()) {
+      this.$message.error("请先登录");
+      this.$router.push("/login");
+    }
+  },
   //子页面
   components: {}
 };

@@ -5,6 +5,19 @@ import Vue from 'vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css' //这个样式必须引入
 
+//引入使用token获取用户信息方法
+import {
+    get_user
+} from "@/api/index.js";
+
+//引入删除token方法
+import {
+    removeToken
+} from '@/utilis/token.js'
+//导入element里的message方法
+import {
+    Message
+} from 'element-ui';
 // 0. 导入 子组件
 import bb from '../components/bb.vue'
 import login from '../views/login/index.vue'
@@ -28,51 +41,122 @@ const router = new VueRouter({
     //这里就是路由的配制项
     routes: [{
         path: '/login', //配置地址
-        component: login //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
+        component: login, //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
+
+        //! meta是路由元信息,可以给这个路由定义标签,让它可以被获取到使用 
+        meta: {
+            title: '登录'
+        }
     }, {
-        path: '/', //配置地址
-        component: bb //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
+        path: '/go', //配置地址
+        component: bb, //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
+        meta: {
+            title: '白名单'
+        }
     }, {
         path: '/index', //配置地址
         component: index, //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
+        meta: {
+            title: '首页'
+        },
         children: [
             //todo 子路由一般不加'/'
             {
                 path: 'user',
-                component: user
+                component: user,
+                meta: {
+                    title: '用户列表'
+                }
             },
             {
                 path: 'enterprise',
-                component: enterprise
+                component: enterprise,
+                meta: {
+                    title: '企业列表'
+                }
             }, {
                 path: 'data',
-                component: data
+                component: data,
+                meta: {
+                    title: '数据概览'
+                }
             }, {
                 path: 'subject',
-                component: subject
+                component: subject,
+                meta: {
+                    title: '学科列表'
+                }
             }, {
                 path: 'question',
-                component: question
+                component: question,
+                meta: {
+                    title: '题库列表'
+                }
             },
         ]
+    }, {
+        //路由重定向:匹配不到的地址,让它跳转的地址
+        path: '*', //匹配不到的地址
+        redirect: '/login' //这里要填入一个跳转对应的地址
     }]
-    // }, {
-    //     //路由重定向:匹配不到的地址,让它跳转的地址
-    //     path: '*', //匹配不到的地址
-    //     redirect: '/' //这里要填入一个跳转对应的地址
-    // }]
 })
 
-//todo导航守卫  路由跳转前
+//?创建路由白名单
+
+let whiteQ = ['/login', '/go'];
+
+//todo导航守卫  路由跳转前触发
+// 参数1：to：到哪去
+// 参数2：from：从哪来
+// 参数3: next 控制去哪里
 router.beforeEach((to, from, next) => {
     // nprogress进度条 开始
     NProgress.start()
     //跳转到下一个页面
-    next()
+    // console.log(to);
+    //判断只要不是跳转登录页面就进行判断
+    // if (to.path != '/login') {
+
+
+    //*判断只要不是跳转白名单页面就进行下面代码
+    if (whiteQ.includes(to.path) != true) {
+        // console.log('123');
+
+        //假如有伪造token访问页面就要导航守卫进行判断token值是否正确
+        //调用获取用户信息方法,如果token对的就让它进行跳转
+        get_user().then(res => {
+            console.log('导航守卫-跳转前:', res);
+
+            if (res.data.code == 200) { //如果token是正确的
+                next()
+            } else {
+                //如果token是错的就提示
+                Message.error('请重新登录')
+                // nprogress进度条 结束
+                NProgress.done()
+                //跳到登录页前删除伪造token
+                removeToken()
+                next('/login')
+
+            }
+        })
+
+    } else {
+        //如果是去白名单页面就放行
+        next()
+    }
 })
 
 //todo导航守卫  路由跳转后
-router.afterEach(() => {
+
+// 跳转之后的函数，是在跳转完触发的
+// 参数1：to：到哪去
+// 参数2：from：从哪来
+router.afterEach((to) => {
+
+    //通过to属性修改网页标题名字 跳转完毕当前路由元信息里的title值就赋给网页标题
+    document.title = to.meta.title
+
     // nprogress进度条 结束
     NProgress.done()
 })

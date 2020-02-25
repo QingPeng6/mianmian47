@@ -1,5 +1,5 @@
 <template>
-  <div>成功</div>
+  <div>路由白名单</div>
 </template>
 
 <script>
