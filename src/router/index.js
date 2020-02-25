@@ -1,11 +1,19 @@
 //导入vue
 import Vue from 'vue'
 
+//引入nprogress
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css' //这个样式必须引入
+
 // 0. 导入 子组件
 import bb from '../components/bb.vue'
 import login from '../views/login/index.vue'
 import index from '../views/index/index.vue'
-import user from '@/views/index/user/index.vue'
+import user from '@/views/index/user/user.vue'
+import enterprise from '@/views/index/enterprise/enterprise.vue'
+import data from '@/views/index/data/data.vue'
+import subject from '@/views/index/subject/subject.vue'
+import question from '@/views/index/question/question.vue'
 // 1. 导入 vue-router
 import VueRouter from 'vue-router'
 //解决同一页面多次访问错误
@@ -32,15 +40,42 @@ const router = new VueRouter({
             {
                 path: 'user',
                 component: user
-            }
+            },
+            {
+                path: 'enterprise',
+                component: enterprise
+            }, {
+                path: 'data',
+                component: data
+            }, {
+                path: 'subject',
+                component: subject
+            }, {
+                path: 'question',
+                component: question
+            },
         ]
-    }, {
-        //路由重定向:匹配不到的地址,让它跳转的地址
-        path: '*', //匹配不到的地址
-        redirect: '/' //这里要填入一个跳转对应的地址
     }]
+    // }, {
+    //     //路由重定向:匹配不到的地址,让它跳转的地址
+    //     path: '*', //匹配不到的地址
+    //     redirect: '/' //这里要填入一个跳转对应的地址
+    // }]
 })
 
+//todo导航守卫  路由跳转前
+router.beforeEach((to, from, next) => {
+    // nprogress进度条 开始
+    NProgress.start()
+    //跳转到下一个页面
+    next()
+})
+
+//todo导航守卫  路由跳转后
+router.afterEach(() => {
+    // nprogress进度条 结束
+    NProgress.done()
+})
 
 // 4. 需要在main.js导入router  注入router
 export default router

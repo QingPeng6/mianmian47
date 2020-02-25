@@ -1,8 +1,5 @@
-//!这是user子组件的index.vue
 <template>
-  <div>
-    我是首页的子页面
-  </div>
+  <div>我是题库列表</div>
 </template>
 
 <script>
@@ -29,9 +26,4 @@ export default {
 };
 </script>
 
-<style scoped>
-div {
-  height: 100%;
-  background-color: red;
-}
-</style>
+<style></style>
