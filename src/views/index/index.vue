@@ -10,11 +10,11 @@
             :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
           ></i>
           <img src="./logo.png" class="imgLOGO" alt="" />
-          <span>万山面面</span>
+          <span>祥子的工作室</span>
         </div>
         <div class="right">
-          <img :src="userImg" alt="" class="imgUser" />
-          <span class="wanshan" v-text="userName"></span>
+          <img :src="$store.state.userImg" alt="" class="imgUser" />
+          <span class="wanshan">亲爱的{{ $store.state.userName }},你好</span>
           <el-button type="primary" size="small" @click="outUser"
             >退出</el-button
           >
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { get_user, out_user } from "@/api/index.js";
+import { out_user } from "@/api/index.js";
 import { getToken } from "@/utilis/token.js";
 import { removeToken } from "@/utilis/token.js";
 export default {
@@ -71,8 +71,8 @@ export default {
   //数据
   data() {
     return {
-      userImg: "", //用户头像图片
-      userName: "", //用户名
+      // userImg: "", //用户头像图片
+      // userName: "", //用户名
       isCollapse: false
     };
   },
@@ -96,6 +96,9 @@ export default {
                 type: "success",
                 message: "退出成功!"
               });
+              //给vuex里面的用户数据清空
+              this.$store.commit("changeName", "");
+              this.$store.commit("changeImg", "");
               this.$router.push("/login"); //跳转登录页
             } else {
               this.$message.error("退出失败");
@@ -116,12 +119,12 @@ export default {
   filters: {},
   //进入页面就执行的生命周期,可以访问dom
   created() {
-    get_user().then(res => {
-      console.log("用户信息", res);
-      //用户头像地址需要拼接
-      this.userImg = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
-      this.userName = res.data.data.username;
-    });
+    // get_user().then(res => {
+    //   console.log("用户信息", res);
+    //   //用户头像地址需要拼接
+    //   this.userImg = process.env.VUE_APP_URL + "/" + res.data.data.avatar;
+    //   this.userName = res.data.data.username;
+    // });
   },
   //渲染页面后执行的生命周期,不能访问dom
   mounted() {},

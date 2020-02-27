@@ -1,6 +1,9 @@
 //导入vue
 import Vue from 'vue'
 
+//导入vuex
+import store from '@/store/vuex'
+
 //引入nprogress
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css' //这个样式必须引入
@@ -128,6 +131,10 @@ router.beforeEach((to, from, next) => {
             console.log('导航守卫-跳转前:', res);
 
             if (res.data.code == 200) { //如果token是正确的
+                //发送res里的值给vuex 保存起来
+                store.commit('changeName', res.data.data.username);
+                store.commit('changeImg', process.env.VUE_APP_URL + "/" + res.data.data.avatar);
+
                 next()
             } else {
                 //如果token是错的就提示
