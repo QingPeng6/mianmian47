@@ -50,7 +50,9 @@
             <el-button @click="handleClick(scope.row)" type="text" size="small"
               >编辑</el-button
             >
-            <el-button type="text" size="small">禁用</el-button>
+            <el-button type="text" size="small" @click="change(scope.row.id)">{{
+              scope.row.status === 1 ? "禁用" : "启用"
+            }}</el-button>
             <el-button type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -72,7 +74,7 @@
 </template>
 
 <script>
-import { get_subject } from "@/api/subject.js";
+import { get_subject, change_subject } from "@/api/subject.js";
 export default {
   props: {},
   //数据
@@ -98,29 +100,37 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+    },
+
+    //修改学科状态
+    change(id) {
+      change_subject({ id }).then(res => {
+        console.log('学科状态修改结果:',res);
+        if (res.data.code == 200) {
+          this.post_subject();
+          this.$message.success("状态更改成功");
+        }
+      });
+    },
+
+    //获取学科信息
+    post_subject() {
+      get_subject().then(res => {
+        console.log("表格数据:", res);
+
+        this.tableData = res.data.data.items;
+        this.total = res.data.data.pagination.total;
+        this.page = res.data.data.pagination.page;
+      });
     }
-  },
+},
   //计算属性
   computed: {},
   //过滤器
   filters: {},
   //进入页面就执行的生命周期,可以访问dom
   created() {
-    get_subject().then(res => {
-      console.log("表格数据:", res);
-
-      this.tableData = res.data.data.items;
-      this.total = res.data.data.pagination.total;
-      this.page = res.data.data.pagination.page;
-      // this.tableData.create_time = this.tableData.create_time.split("")[0];
-      // this.tableData.create_time = this.tableData.create_time.map(item => {
-      //   if (item) {
-      //     this.tableData.create_time = item.split("]")[0];
-      //   } else {
-      //     return 0;
-      //   }
-      // });
-    });
+    this.post_subject();
   },
   //渲染页面后执行的生命周期,不能访问dom
   mounted() {},

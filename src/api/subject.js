@@ -26,11 +26,20 @@ subjectQ.interceptors.request.use(function (config) {
         return Promise.reject(err)
     })
 
-export function get_subject(params) {
+export function get_subject(data) {
 
     return subjectQ({
         url: '/subject/list',
         method: 'get',
-        params
+        data
+    })
+}
+
+export function change_subject(data) {
+
+    return subjectQ({
+        url: '/subject/status',
+        method: 'post',
+        data
     })
 }
