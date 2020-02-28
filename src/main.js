@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import App from './App.vue'
 
+//导入全局过滤器
+import './filters/filters'
+
+
 //导入vuex
 import store from './store/vuex'
 //导入路由 

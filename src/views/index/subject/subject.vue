@@ -47,7 +47,11 @@
         <el-table-column prop="name" label="学科名称"> </el-table-column>
         <el-table-column prop="short_name" label="简称"> </el-table-column>
         <el-table-column prop="username" label="创建者"> </el-table-column>
-        <el-table-column prop="create_time" label="创建日期"> </el-table-column>
+        <el-table-column prop="create_time" label="创建日期">
+          <template>
+            {{ this.tableData.create_time | filter_time }}
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="状态">
           <!-- 自定义列   -->
           <template slot-scope="scope">
@@ -58,13 +62,15 @@
 
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small"
+            <el-button @click="editSub(scope.row)" type="text" size="small"
               >编辑</el-button
             >
             <el-button type="text" size="small" @click="change(scope.row.id)">{{
               scope.row.status === 1 ? "禁用" : "启用"
             }}</el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" @click="remove(scope.row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -78,23 +84,27 @@
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
-      >
-      </el-pagination>
+      ></el-pagination>
     </el-card>
 
     <addS ref="addS"></addS>
+    <editS ref="editS"></editS>
   </div>
 </template>
 
 <script>
 import addS from "./components/addSubject";
-import { get_subject, change_subject } from "@/api/subject.js";
+
+import editS from "./components/editSubject";
+import { get_subject, change_subject, remove_subject } from "@/api/subject.js";
 
 export default {
+  name: "sub",
   props: {},
   //数据
   data() {
     return {
+      oldItem: "", //用来判断是否修改的是同一个
       formInline: {
         rid: "",
         name: "",
@@ -127,9 +137,15 @@ export default {
       this.post_subject(); //清空表单后再搜索获取学科数据
     },
 
-    //表格
-    handleClick(row) {
-      console.log(row);
+    //修改学科
+    editSub(item) {
+      console.log("当前点击行的数据:", item);
+      this.$refs.editS.dialogFormVisible = true;
+
+      if (item != this.oldItem) {
+        this.$refs.editS.form = { ...item };
+        this.oldItem = item;
+      }
     },
 
     //搜索学科事件
@@ -164,7 +180,23 @@ export default {
         }
       });
     },
-
+    //删除学科
+    remove(id) {
+      //判断如果当前删除的是当前页码的最后一个数据,删除完后就让页码返回上一页
+      if (this.tableData.length == 1) {
+        this.page--;
+      }
+      if (this.page == 0) {
+        this.page = 1;
+      }
+      remove_subject({ id }).then(res => {
+        console.log("学科删除:", res);
+        if (res.data.code == 200) {
+          this.post_subject(); //重新获取数据
+          this.$message.success("删除成功");
+        }
+      });
+    },
     //获取学科信息
 
     post_subject() {
@@ -199,7 +231,8 @@ export default {
   watch: {},
   //子页面
   components: {
-    addS
+    addS,
+    editS
   }
 };
 </script>
@@ -217,32 +250,13 @@ export default {
   width: 149px !important;
   height: 39px;
 }
-.el-dialog {
-  width: 600px !important;
-}
-.el-dialog__header {
-  /* 给父盒子设置弹性盒子 */
-  display: flex;
-  /* 主轴(默认从左到右)排列为   元素左右间距相同 */
-  justify-content: space-around;
-  /* 侧轴(默认从上到下)排列为   居中对齐 */
-  align-items: center;
-}
-.el-dialog__footer {
-  /* 给父盒子设置弹性盒子 */
-  display: flex;
-  /* 主轴(默认从左到右)排列为   元素左右间距相同 */
-  justify-content: space-around;
-  /* 侧轴(默认从上到下)排列为   居中对齐 */
-  align-items: center;
-}
-
-.el-dialog__body {
-  padding: 20px 20px !important;
-}
 
 .el-pagination {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 20px;
 }
+
+/* .el-card__body{
+  
+} */
 </style>

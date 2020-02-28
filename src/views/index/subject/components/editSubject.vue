@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog center title="新增学科" :visible.sync="dialogFormVisible">
+    <el-dialog center title="编辑学科" :visible.sync="dialogFormVisible">
       <el-form :rules="rules" ref="form" :model="form">
         <el-form-item label="学科编号" :label-width="formLabelWidth" prop="rid">
           <el-input v-model="form.rid" autocomplete="off"></el-input>
@@ -12,26 +12,26 @@
         >
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="学科简称" :label-width="formLabelWidth" prop="short_name">
+        <el-form-item label="学科简称" :label-width="formLabelWidth">
           <el-input v-model="form.short_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="学科简介" :label-width="formLabelWidth" prop="intro"> 
+        <el-form-item label="学科简介" :label-width="formLabelWidth">
           <el-input v-model="form.intro" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="学科备注" :label-width="formLabelWidth" prop="remark">
+        <el-form-item label="学科备注" :label-width="formLabelWidth">
           <el-input v-model="form.remark" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="goAdd">确 定</el-button>
+        <el-button type="primary" @click="goEdit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { add_subject } from "@/api/subject.js";
+import { edit_subject } from "@/api/subject.js";
 export default {
   props: {},
   //数据
@@ -48,19 +48,16 @@ export default {
   },
   //方法
   methods: {
-    goAdd() {
+    goEdit() {
       //进行表单验证
       this.$refs.form.validate(v => {
         //如果验证成功就发送 新增数据的请求
         if (v) {
-          add_subject(this.form).then(res => {
-            console.log(res);
+          edit_subject(this.form).then(res => {
             if (res.data.code == 200) {
-              this.$message.success("新增成功");
-
+              this.$message.success("修改成功");
               this.$parent.post_subject(); //给父组件的数据刷新
               this.dialogFormVisible = false; //新增对话框隐藏
-              this.$refs.form.resetFields(); //重置表单数据
             } else {
               this.$message.error(res.data.message); //如果服务器请求失败弹出
             }
@@ -71,7 +68,6 @@ export default {
     //取消新增
     cancel() {
       //重置表单,并退出表单
-      this.$refs.form.resetFields(); //重置表单数据
       this.dialogFormVisible = false; //新增对话框隐藏
     }
   },
@@ -85,9 +81,7 @@ export default {
   mounted() {},
   //侦听器
   watch: {
-    // 'dialogFormVisible'() {
-    //   this.$refs.form.resetFields();
-    // }
+ 
   },
   //子页面
   components: {}
