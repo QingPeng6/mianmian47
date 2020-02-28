@@ -153,7 +153,7 @@ export default {
   //     background-color: green;
   //   }
   .my-main {
-    background-color: blue;
+    background-color: rgb(140, 168, 179);
   }
 }
 .hed {

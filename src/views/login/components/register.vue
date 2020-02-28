@@ -5,7 +5,7 @@
       title="用户注册"
       center
       width="603px"
-      :visible.sync="dialogFormVisible"
+      :visible.sync="dialogFormVisible" 
     >
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="头像" :label-width="formLabelWidth" prop="pic">
