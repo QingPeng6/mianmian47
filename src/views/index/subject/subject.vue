@@ -1,29 +1,30 @@
 <template>
   <div>
     <el-card class="box-card">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="学科编号">
-          <el-input class="duan" v-model="formInline.user"></el-input>
+      <el-form
+        :inline="true"
+        :model="formInline"
+        ref="formInline"
+        class="demo-form-inline"
+      >
+        <el-form-item label="学科编号" prop="rid">
+          <el-input class="duan" v-model="formInline.rid"></el-input>
         </el-form-item>
-        <el-form-item label="学科名称">
-          <el-input class="chang" v-model="formInline.user"></el-input>
+        <el-form-item label="学科名称" prop="name">
+          <el-input class="chang" v-model="formInline.name"></el-input>
         </el-form-item>
-        <el-form-item label="创建者">
-          <el-input class="duan" v-model="formInline.user"></el-input>
+        <el-form-item label="创建者" prop="username">
+          <el-input class="duan" v-model="formInline.username"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
-          <el-select
-            class="chang"
-            v-model="formInline.region"
-            placeholder="活动区域"
-          >
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="状态" prop="status">
+          <el-select class="chang" v-model="formInline.status">
+            <el-option label="启用" value="1"></el-option>
+            <el-option label="禁用" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
-          <el-button>清除</el-button>
+          <el-button type="primary" @click="searchX">搜索</el-button>
+          <el-button @click="clearX">清除</el-button>
           <el-button type="primary" icon="el-icon-plus">新增学科</el-button>
         </el-form-item>
       </el-form>
@@ -63,7 +64,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="page"
-        :page-sizes="[10, 20, 30, 40]"
+        :page-sizes="[5, 10, 15, 20, 30]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -80,32 +81,56 @@ export default {
   //数据
   data() {
     return {
-      formInline: {},
+      formInline: {
+        rid: "",
+        name: "",
+        username: "",
+        status: ""
+      },
       page: 1, //当前页
-      size: 10, //页容量
+      size: 5, //页容量
       total: 0, //数据总数量
       tableData: [] //表格数据
     };
   },
   //方法
   methods: {
+    //清除学科搜索
+    clearX() {
+      this.page = 1; //搜索第一页的数据
+      this.$refs.formInline.resetFields(); //清空搜索表单内容,需要加prop值,否则无效
+      this.post_subject(); //清空表单后再搜索获取学科数据
+    },
     //表格
     handleClick(row) {
       console.log(row);
     },
-
+    //搜索学科事件
+    searchX() {
+      this.page = 1; //搜索第一页的数据
+      this.post_subject();
+    },
     //分页插件
+
+    //页容量变化事件
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
+      this.size = val; //页容量赋值
+      this.page = 1; //页码回到第一页
+      this.post_subject();
     },
+
+    //页码变化事件
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+      this.page = val;
+      this.post_subject();
     },
 
     //修改学科状态
     change(id) {
       change_subject({ id }).then(res => {
-        console.log('学科状态修改结果:',res);
+        console.log("学科状态修改结果:", res);
         if (res.data.code == 200) {
           this.post_subject();
           this.$message.success("状态更改成功");
@@ -115,20 +140,29 @@ export default {
 
     //获取学科信息
     post_subject() {
-      get_subject().then(res => {
+      get_subject({
+        page: this.page,
+        limit: this.size,
+        ...this.formInline //解构语法
+        // rid: this.formInline.rid,
+        // name: this.formInline.name,
+        // username: this.formInline.username,
+        // status: this.formInline.status
+      }).then(res => {
         console.log("表格数据:", res);
 
         this.tableData = res.data.data.items;
         this.total = res.data.data.pagination.total;
       });
     }
-},
+  },
   //计算属性
   computed: {},
   //过滤器
   filters: {},
   //进入页面就执行的生命周期,可以访问dom
   created() {
+    //调用获取学科信息方法
     this.post_subject();
   },
   //渲染页面后执行的生命周期,不能访问dom
