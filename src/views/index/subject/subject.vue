@@ -120,7 +120,6 @@ export default {
 
         this.tableData = res.data.data.items;
         this.total = res.data.data.pagination.total;
-        this.page = res.data.data.pagination.page;
       });
     }
 },
