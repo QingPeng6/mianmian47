@@ -25,7 +25,12 @@
         <el-form-item>
           <el-button type="primary" @click="searchX">搜索</el-button>
           <el-button @click="clearX">清除</el-button>
-          <el-button type="primary" icon="el-icon-plus">新增学科</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            @click="$refs.addS.dialogFormVisible = true"
+            >新增学科</el-button
+          >
         </el-form-item>
       </el-form>
     </el-card>
@@ -71,10 +76,13 @@
       >
       </el-pagination>
     </el-card>
+
+    <addS ref="addS"></addS>
   </div>
 </template>
 
 <script>
+import addS from "./components/addSubject";
 import { get_subject, change_subject } from "@/api/subject.js";
 export default {
   props: {},
@@ -170,7 +178,9 @@ export default {
   //侦听器
   watch: {},
   //子页面
-  components: {}
+  components: {
+    addS
+  }
 };
 </script>
 
