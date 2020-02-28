@@ -99,7 +99,7 @@ import editS from "./components/editSubject";
 import { get_subject, change_subject, remove_subject } from "@/api/subject.js";
 
 export default {
-  name: "sub",
+  name: "subssss",
   props: {},
   //数据
   data() {
