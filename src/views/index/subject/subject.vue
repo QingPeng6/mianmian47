@@ -2,33 +2,34 @@
   <div>
     <!-- 上面的学科表单开始 -->
     <el-card class="box-card">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="学科编号">
-          <el-input class="duan" v-model="formInline.user"></el-input>
+      <el-form
+        :inline="true"
+        :model="formInline"
+        ref="formInline"
+        class="demo-form-inline"
+      >
+        <el-form-item label="学科编号" prop="rid">
+          <el-input class="duan" v-model="formInline.rid"></el-input>
         </el-form-item>
-        <el-form-item label="学科名称">
-          <el-input class="chang" v-model="formInline.user"></el-input>
+        <el-form-item label="学科名称" prop="name">
+          <el-input class="chang" v-model="formInline.name"></el-input>
         </el-form-item>
-        <el-form-item label="创建者">
-          <el-input class="duan" v-model="formInline.user"></el-input>
+        <el-form-item label="创建者" prop="username">
+          <el-input class="duan" v-model="formInline.username"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
-          <el-select
-            class="chang"
-            v-model="formInline.region"
-            placeholder="活动区域"
-          >
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="状态" prop="status">
+          <el-select class="chang" v-model="formInline.status">
+            <el-option label="启用" value="1"></el-option>
+            <el-option label="禁用" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
-          <el-button>清除</el-button>
+          <el-button type="primary" @click="searchX">搜索</el-button>
+          <el-button @click="clearX">清除</el-button>
           <el-button
             type="primary"
             icon="el-icon-plus"
-            @click="dialogFormVisible = true"
+            @click="$refs.addS.dialogFormVisible = true"
             >新增学科</el-button
           >
         </el-form-item>
@@ -73,78 +74,34 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="page"
-        :page-sizes="[5, 10, 15, 20]"
+        :page-sizes="[5, 10, 15, 20, 30]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
       >
       </el-pagination>
     </el-card>
-    <!-- 下面的学科表单结束 -->
 
-    <!-- 新增学科对话框开始 -->
-    <el-dialog class="xuek" title="新增学科" :visible.sync="dialogFormVisible">
-      <el-form :model="form" :rules="rules" ref="form">
-        <el-form-item prop="num" label="学科编号" :label-width="formLabelWidth">
-          <el-input v-model="form.num"></el-input>
-        </el-form-item>
-        <el-form-item
-          prop="name"
-          label="学科名称"
-          :label-width="formLabelWidth"
-        >
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item
-          prop="short"
-          label="学科简称"
-          :label-width="formLabelWidth"
-        >
-          <el-input v-model="form.short"></el-input>
-        </el-form-item>
-        <el-form-item
-          prop="intro"
-          label="学科简介"
-          :label-width="formLabelWidth"
-        >
-          <el-input v-model="form.intro"></el-input>
-        </el-form-item>
-        <el-form-item
-          prop="remark"
-          label="学科备注"
-          :label-width="formLabelWidth"
-        >
-          <el-input v-model="form.remark"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="noAdd">取 消</el-button>
-        <el-button type="primary" @click="addS">确 定</el-button>
-      </div>
-    </el-dialog>
-    <!-- 新增学科对话框结束 -->
+    <addS ref="addS"></addS>
   </div>
 </template>
 
 <script>
-import { get_subject, change_subject, add_subject } from "@/api/subject.js";
+import addS from "./components/addSubject";
+import { get_subject, change_subject } from "@/api/subject.js";
+
 export default {
   props: {},
   //数据
   data() {
     return {
-      dialogFormVisible: false,
-
-      //新增学科表单
-      form: {
-        num: "",
+      formInline: {
+        rid: "",
         name: "",
-        short: "",
-        intro: "",
-        remark: ""
+        username: "",
+        status: ""
       },
-      formLabelWidth: "100px", //表单的内容
-      formInline: {},
+
       page: 1, //当前页
       size: 5, //页容量
       total: 0, //数据总数量
@@ -163,43 +120,11 @@ export default {
   },
   //方法
   methods: {
-    //新增取消
-    noAdd() {
-      //注册成功后关闭表 单
-      this.dialogFormVisible = false;
-      //清空表单
-      this.$refs.form.resetFields();
-    },
-    //新增学科确定提交
-    addS() {
-      //表单验证
-      this.$refs.form.validate(v => {
-        if (v) {
-          //全部成功的话就发送axios请求
-          add_subject({
-            rid: this.form.num,
-            name: this.form.name,
-            short_name: this.form.short,
-            intro: this.form.intro,
-            remark: this.form.remark
-          }).then(res => {
-            console.log("学科列表提交结果:", res);
-            if (res.data.code == 200) {
-              this.$message.success("提交成功");
-              //发送请求至获取表格数据 用来重新渲染
-              this.post_subject({ page: this.page, limit: this.size });
-              //注册成功后关闭表 单
-              this.dialogFormVisible = false;
-              //清空表单
-              this.$refs.form.resetFields();
-            }
-          });
-        } else {
-          this.$message.warning("注册失败:请正确填写");
-          console.log("提交失败,至少有一项填的不标准");
-          return false;
-        }
-      });
+    //清除学科搜索
+    clearX() {
+      this.page = 1; //搜索第一页的数据
+      this.$refs.formInline.resetFields(); //清空搜索表单内容,需要加prop值,否则无效
+      this.post_subject(); //清空表单后再搜索获取学科数据
     },
 
     //表格
@@ -207,20 +132,26 @@ export default {
       console.log(row);
     },
 
-    //页容量变动
+    //搜索学科事件
+    searchX() {
+      this.page = 1; //搜索第一页的数据
+      this.post_subject();
+    },
+    //分页插件
+
+    //页容量变化事件
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
-      this.size = val; //把页容量赋值
-      this.post_subject({ page: this.page, limit: this.size });
+      this.size = val; //页容量赋值
+      this.page = 1; //页码回到第一页
+      this.post_subject();
     },
 
-    //当前页变动
+    //页码变化事件
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-      this.page = val; //把当前页码赋值
-      // console.log(typeof val);
-      console.log(typeof this.page);
-      this.post_subject({ page: this.page, limit: this.size });
+      this.page = val;
+      this.post_subject();
     },
 
     //修改学科状态
@@ -235,13 +166,21 @@ export default {
     },
 
     //获取学科信息
-    post_subject(params) {
-      get_subject(params).then(res => {
+
+    post_subject() {
+      get_subject({
+        page: this.page,
+        limit: this.size,
+        ...this.formInline //解构语法
+        // rid: this.formInline.rid,
+        // name: this.formInline.name,
+        // username: this.formInline.username,
+        // status: this.formInline.status
+      }).then(res => {
         console.log("表格数据:", res);
 
         this.tableData = res.data.data.items;
         this.total = res.data.data.pagination.total;
-        // this.page = res.data.data.pagination.page;
       });
     }
   },
@@ -251,14 +190,17 @@ export default {
   filters: {},
   //进入页面就执行的生命周期,可以访问dom
   created() {
-    this.post_subject({ page: this.page, limit: this.size });
+    //调用获取学科信息方法
+    this.post_subject();
   },
   //渲染页面后执行的生命周期,不能访问dom
   mounted() {},
   //侦听器
   watch: {},
   //子页面
-  components: {}
+  components: {
+    addS
+  }
 };
 </script>
 

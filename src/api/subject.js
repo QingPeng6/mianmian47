@@ -26,6 +26,9 @@ subjectQ.interceptors.request.use(function (config) {
         return Promise.reject(err)
     })
 
+
+//获取学科信息
+
 export function get_subject(params) {
 
     return subjectQ({
@@ -35,6 +38,7 @@ export function get_subject(params) {
     })
 }
 
+//修改学科状态
 
 export function change_subject(data) {
 
@@ -44,6 +48,9 @@ export function change_subject(data) {
         data
     })
 }
+
+
+//新增学科
 
 export function add_subject(data) {
 
