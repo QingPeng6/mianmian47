@@ -88,6 +88,7 @@ import addS from "./components/addSubject";
 import editS from "./components/editSubject";
 import { get_subject, change_subject, remove_subject } from "@/api/subject.js";
 export default {
+  name: "sub",
   props: {},
   //数据
   data() {
@@ -158,6 +159,13 @@ export default {
     },
     //删除学科
     remove(id) {
+      //判断如果当前删除的是当前页码的最后一个数据,删除完后就让页码返回上一页
+      if (this.tableData.length == 1) {
+        this.page--;
+      }
+      if (this.page == 0) {
+        this.page = 1;
+      }
       remove_subject({ id }).then(res => {
         console.log("学科删除:", res);
         if (res.data.code == 200) {
