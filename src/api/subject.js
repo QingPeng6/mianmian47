@@ -56,3 +56,24 @@ export function add_subject(data) {
         data
     })
 }
+
+//修改学科
+export function edit_subject(data) {
+
+    return subjectQ({
+        url: '/subject/edit',
+        method: 'post',
+        data
+    })
+}
+
+
+//删除学科
+export function remove_subject(data) {
+
+    return subjectQ({
+        url: '/subject/remove',
+        method: 'post',
+        data
+    })
+}
