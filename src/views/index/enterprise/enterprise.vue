@@ -26,10 +26,7 @@
         <el-form-item>
           <el-button type="primary" @click="searchX">搜索</el-button>
           <el-button @click="clearX">清除</el-button>
-          <el-button
-            type="primary"
-            icon="el-icon-plus"
-            @click="$refs.addS.dialogFormVisible = true"
+          <el-button type="primary" icon="el-icon-plus" @click="addE"
             >新增企业</el-button
           >
         </el-form-item>
@@ -87,16 +84,22 @@
       ></el-pagination>
     </el-card>
 
-    <addS ref="addS"></addS>
-    <editS ref="editS"></editS>
+    <!-- <addS ref="addS"></addS>
+    <editS ref="editS"></editS> -->
+    <enterpriseSon ref="enterpriseSon"></enterpriseSon>
   </div>
 </template>
 
 <script>
-import addS from "./components/addenterprise";
+// import addS from "./components/addenterprise";
 
-import editS from "./components/editenterpriset";
-import { get_enterprise, change_enterprise, remove_enterprise } from "@/api/enterprise.js";
+// import editS from "./components/editenterpriset";
+import enterpriseSon from "./components/enterpriseSon";
+import {
+  get_enterprise,
+  change_enterprise,
+  remove_enterprise
+} from "@/api/enterprise.js";
 
 export default {
   name: "subssss",
@@ -130,6 +133,12 @@ export default {
   },
   //方法
   methods: {
+    //新增企业
+    addE() {
+      this.$refs.enterpriseSon.form = {};
+      this.$refs.enterpriseSon.isAdd = true;
+      this.$refs.enterpriseSon.dialogFormVisible = true;
+    },
     //清除企业搜索
     clearX() {
       this.page = 1; //搜索第一页的数据
@@ -140,10 +149,11 @@ export default {
     //修改企业
     editSub(item) {
       console.log("当前点击行的数据:", item);
-      this.$refs.editS.dialogFormVisible = true;
+      this.$refs.enterpriseSon.isAdd = false;
+      this.$refs.enterpriseSon.dialogFormVisible = true;
 
       if (item != this.oldItem) {
-        this.$refs.editS.form = { ...item };
+        this.$refs.enterpriseSon.form = { ...item };
         this.oldItem = item;
       }
     },
@@ -231,8 +241,9 @@ export default {
   watch: {},
   //子页面
   components: {
-    addS,
-    editS
+    // addS,
+    // editS
+    enterpriseSon
   }
 };
 </script>

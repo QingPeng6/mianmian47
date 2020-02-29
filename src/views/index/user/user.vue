@@ -40,7 +40,7 @@
 
     <!-- 下面的用户表单开始 -->
     <el-card class="box-card">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table border :data="tableData" style="width: 100%">
         <el-table-column type="index" width="50" label="序号">
         </el-table-column>
         <el-table-column prop="username" label="用户名"> </el-table-column>
@@ -101,9 +101,7 @@ export default {
   data() {
     return {
       oldItem: "", //用来判断是否修改的是同一个
-      formInline: {
-        
-      },
+      formInline: {},
 
       page: 1, //当前页
       size: 5, //页容量
@@ -230,7 +228,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
 .box-card {
   margin-bottom: 20px;
 }
@@ -252,4 +250,13 @@ export default {
 /* .el-card__body{
   
 } */
+
+// .has-gutter {
+//   th {
+//     border: 1px solid rgba(230, 233, 242, 1) !important;
+//   }
+//   .el-table_1_column_8 {
+//        border: 1px solid rgba(230, 233, 242, 1) !important;
+//   }
+// }
 </style>
