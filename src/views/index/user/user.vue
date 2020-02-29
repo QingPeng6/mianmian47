@@ -14,22 +14,17 @@
         <el-form-item label="用户邮箱" prop="email">
           <el-input class="chang" v-model="formInline.email"></el-input>
         </el-form-item>
-        <el-form-item label="角色" prop="role">
-          <el-input class="duan" v-model="formInline.role"></el-input>
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select class="chang" v-model="formInline.status">
-            <el-option label="启用" value="1"></el-option>
-            <el-option label="禁用" value="0"></el-option>
+        <el-form-item label="角色" prop="role_id">
+          <el-select class="chang" v-model="formInline.role_id">
+            <el-option label="管理员" value="2"></el-option>
+            <el-option label="老师" value="3"></el-option>
+            <el-option label="学生" value="4"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="searchX">搜索</el-button>
           <el-button @click="clearX">清除</el-button>
-          <el-button
-            type="primary"
-            icon="el-icon-plus"
-            @click="$refs.addS.dialogFormVisible = true"
+          <el-button type="primary" icon="el-icon-plus" @click="adduser"
             >新增用户</el-button
           >
         </el-form-item>
@@ -83,15 +78,16 @@
       ></el-pagination>
     </el-card>
 
-    <addS ref="addS"></addS>
-    <editS ref="editS"></editS>
+    <userSon ref="userSon"></userSon>
   </div>
 </template>
 
 <script>
-import addS from "./components/adduser";
+// import addS from "./components/adduser";
 
-import editS from "./components/edituser";
+// import editS from "./components/edituser";
+
+import userSon from "./components/userSon";
 import { get_user, change_user, remove_user } from "@/api/user.js";
 
 export default {
@@ -121,6 +117,12 @@ export default {
   },
   //方法
   methods: {
+    //新增用户
+    adduser() {
+      this.$refs.userSon.form = {};
+      this.$refs.userSon.isAdd = true;
+      this.$refs.userSon.dialogFormVisible = true;
+    },
     //清除用户搜索
     clearX() {
       this.page = 1; //搜索第一页的数据
@@ -131,10 +133,11 @@ export default {
     //修改用户
     editSub(item) {
       console.log("当前点击行的数据:", item);
-      this.$refs.editS.dialogFormVisible = true;
+      this.$refs.userSon.isAdd = false;
+      this.$refs.userSon.dialogFormVisible = true;
 
       if (item != this.oldItem) {
-        this.$refs.editS.form = { ...item };
+        this.$refs.userSon.form = { ...item };
         this.oldItem = item;
       }
     },
@@ -222,8 +225,7 @@ export default {
   watch: {},
   //子页面
   components: {
-    addS,
-    editS
+    userSon
   }
 };
 </script>
