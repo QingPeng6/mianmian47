@@ -7,6 +7,7 @@ const store = new Vuex.Store({
     state: {
         userName: '', //用户名
         userImg: '', //用户头像
+        role: '', //当前用户身份
     },
     mutations: {
         //修改用户名
@@ -16,6 +17,10 @@ const store = new Vuex.Store({
         //修改用户头像
         changeImg(state, value) {
             state.userImg = value;
+        },
+        //修改用户身份
+        changeRole(state, value) {
+            state.role = value;
         },
     }
 })

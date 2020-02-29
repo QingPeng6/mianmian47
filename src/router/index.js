@@ -21,15 +21,14 @@ import {
 import {
     Message
 } from 'element-ui';
-// 0. 导入 子组件
+
+//!引入抽取出的子路由
+import children from './children'
+
+
 import bb from '../components/bb.vue'
 import login from '../views/login/index.vue'
 import index from '../views/index/index.vue'
-import user from '@/views/index/user/user.vue'
-import enterprise from '@/views/index/enterprise/enterprise.vue'
-import data from '@/views/index/data/data.vue'
-import subject from '@/views/index/subject/subject.vue'
-import question from '@/views/index/question/question.vue'
 // 1. 导入 vue-router
 import VueRouter from 'vue-router'
 //解决同一页面多次访问错误
@@ -48,7 +47,8 @@ const router = new VueRouter({
 
         //! meta是路由元信息,可以给这个路由定义标签,让它可以被获取到使用 
         meta: {
-            title: '登录'
+            title: '登录',
+            roles: ['超级管理员', '管理员', '老师', '学生']
         }
     }, {
         path: '/go', //配置地址
@@ -60,43 +60,10 @@ const router = new VueRouter({
         path: '/index', //配置地址
         component: index, //这里要填入一个组件名(填入import的名字)，也就是上面地址对应的组件
         meta: {
-            title: '首页'
+            title: '首页',
+            roles: ['超级管理员', '管理员', '老师', '学生']
         },
-        children: [
-            //todo 子路由一般不加'/'
-            {
-                path: 'user',
-                component: user,
-                meta: {
-                    title: '用户列表'
-                }
-            },
-            {
-                path: 'enterprise',
-                component: enterprise,
-                meta: {
-                    title: '企业列表'
-                }
-            }, {
-                path: 'data',
-                component: data,
-                meta: {
-                    title: '数据概览'
-                }
-            }, {
-                path: 'subject',
-                component: subject,
-                meta: {
-                    title: '学科列表'
-                }
-            }, {
-                path: 'question',
-                component: question,
-                meta: {
-                    title: '题库列表'
-                }
-            },
-        ]
+        children
     }, {
         //路由重定向:匹配不到的地址,让它跳转的地址
         path: '*', //匹配不到的地址
@@ -131,11 +98,41 @@ router.beforeEach((to, from, next) => {
             console.log('导航守卫-跳转前:', res);
 
             if (res.data.code == 200) { //如果token是正确的
-                //发送res里的值给vuex 保存起来
-                store.commit('changeName', res.data.data.username);
-                store.commit('changeImg', process.env.VUE_APP_URL + "/" + res.data.data.avatar);
 
-                next()
+                if (res.data.data.status) { //判断账号是否被禁用,如果被禁用就不允许登录
+                    //发送res里的值给vuex 保存起来
+                    store.commit('changeName', res.data.data.username);
+                    store.commit('changeImg', process.env.VUE_APP_URL + "/" + res.data.data.avatar);
+                    store.commit('changeRole', res.data.data.role);
+                    if (from.path == ('/login')) { //，如果是从登录跳过来的，弹出登录成功
+                        Message.success("登录成功");
+                    }
+
+
+                    //判断要去的地址包含访问的用户里有没有role的用户,有就放行
+                    if (to.meta.roles.includes(res.data.data.role)) {
+                        next()
+
+                    } else { //没有就停在原页面
+
+                        next(from.path);
+                        Message.warning("无权限");
+                        // nprogress进度条 结束
+                        NProgress.done()
+
+                    }
+
+
+
+
+
+
+                } else {
+                    Message.error('账号被禁用');
+                    // nprogress进度条 结束
+                    NProgress.done()
+                }
+
             } else {
                 //如果token是错的就提示
                 Message.error('请重新登录')

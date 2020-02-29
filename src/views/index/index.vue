@@ -30,29 +30,64 @@
           default-active="/index/data"
           class="el-menu-vertical-demo"
         >
-          <el-menu-item index="/index/data">
-            <i class="el-icon-pie-chart"></i>
-            <span slot="title">数据概览</span>
-          </el-menu-item>
+          <template v-for="(item, index) in this.children">
+            <el-menu-item
+              :key="index"
+              :index="'/index/' + item.path"
+              v-if="item.meta.roles.includes($store.state.role)"
+            >
+              <i :class="item.meta.icon"></i>
+              <span slot="title">{{ item.meta.title }}</span>
+            </el-menu-item>
+            <!-- <el-menu-item
+              :key="index"
+              :index="'/index/' + item.path"
+              v-if="item.meta.roles.includes($store.state.role)"
+            >
+              <i class="el-icon-pie-chart"></i>
+              <span slot="title">{{ item.meta.title }}</span>
+            </el-menu-item> -->
+          </template>
 
-          <el-menu-item index="/index/user">
+          <!-- <el-menu-item
+            index="/index/user"
+            v-if="['超级管理员', '管理员'].includes($store.state.role)"
+          >
             <i class="el-icon-user"></i>
             <span slot="title">用户列表</span>
           </el-menu-item>
 
-          <el-menu-item index="/index/question">
+          <el-menu-item
+            index="/index/question"
+            v-if="
+              ['超级管理员', '管理员', '老师', '学生'].includes(
+                $store.state.role
+              )
+            "
+          >
             <i class="el-icon-edit-outline"></i>
             <span slot="title">题库列表</span>
           </el-menu-item>
 
-          <el-menu-item index="/index/enterprise">
+          <el-menu-item
+            index="/index/enterprise"
+            v-if="['超级管理员', '管理员', '老师'].includes($store.state.role)"
+          >
             <i class="el-icon-menu"></i>
             <span slot="title">企业列表</span>
           </el-menu-item>
-          <el-menu-item index="/index/subject">
+
+          <el-menu-item
+            index="/index/subject"
+            v-if="
+              ['超级管理员', '管理员', '老师', '学生'].includes(
+                $store.state.role
+              )
+            "
+          >
             <i class="el-icon-notebook-2"></i>
             <span slot="title">学科列表</span>
-          </el-menu-item>
+          </el-menu-item> -->
         </el-menu>
       </el-aside>
       <el-main class="my-main">
@@ -66,11 +101,14 @@
 import { out_user } from "@/api/index.js";
 import { getToken } from "@/utilis/token.js";
 import { removeToken } from "@/utilis/token.js";
+//导入children 用来渲染页面
+import children from "@/router/children.js";
 export default {
   props: {},
   //数据
   data() {
     return {
+      children,
       // userImg: "", //用户头像图片
       // userName: "", //用户名
       isCollapse: false
