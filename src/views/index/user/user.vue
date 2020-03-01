@@ -136,6 +136,9 @@ export default {
       this.$refs.userSon.isAdd = false;
       this.$refs.userSon.dialogFormVisible = true;
 
+      //用来修改的时候状态显示中文 如果是1就是启用 如果是0就是禁用
+      item.statusValue = item.status ? "启用" : "禁用";
+
       if (item != this.oldItem) {
         this.$refs.userSon.form = { ...item };
         this.oldItem = item;

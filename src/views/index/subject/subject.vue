@@ -26,10 +26,7 @@
         <el-form-item>
           <el-button type="primary" @click="searchX">搜索</el-button>
           <el-button @click="clearX">清除</el-button>
-          <el-button
-            type="primary"
-            icon="el-icon-plus"
-            @click="$refs.addS.dialogFormVisible = true"
+          <el-button type="primary" icon="el-icon-plus" @click="addSon"
             >新增学科</el-button
           >
         </el-form-item>
@@ -87,15 +84,16 @@
       ></el-pagination>
     </el-card>
 
-    <addS ref="addS"></addS>
-    <editS ref="editS"></editS>
+    <!-- <addS ref="addS"></addS> -->
+    <subjectSon ref="subjectSon"></subjectSon>
   </div>
 </template>
 
 <script>
-import addS from "./components/addSubject";
+// import addS from "./components/addSubject";
 
-import editS from "./components/editSubject";
+// import editS from "./components/editSubject";
+import subjectSon from "./components/subjectSon";
 import { get_subject, change_subject, remove_subject } from "@/api/subject.js";
 
 export default {
@@ -130,6 +128,12 @@ export default {
   },
   //方法
   methods: {
+    //新增学科事件
+    addSon() {
+      this.$refs.subjectSon.form = {};
+      this.$refs.subjectSon.isAdd = true;
+      this.$refs.subjectSon.dialogFormVisible = true;
+    },
     //清除学科搜索
     clearX() {
       this.page = 1; //搜索第一页的数据
@@ -140,10 +144,11 @@ export default {
     //修改学科
     editSub(item) {
       console.log("当前点击行的数据:", item);
-      this.$refs.editS.dialogFormVisible = true;
+      this.$refs.subjectSon.isAdd = false;
+      this.$refs.subjectSon.dialogFormVisible = true;
 
       if (item != this.oldItem) {
-        this.$refs.editS.form = { ...item };
+        this.$refs.subjectSon.form = { ...item };
         this.oldItem = item;
       }
     },
@@ -231,8 +236,9 @@ export default {
   watch: {},
   //子页面
   components: {
-    addS,
-    editS
+    // addS,
+    // editS
+    subjectSon
   }
 };
 </script>
