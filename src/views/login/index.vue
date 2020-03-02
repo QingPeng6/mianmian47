@@ -208,7 +208,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less"  scoped>
 .login-wrap {
   width: 100%;
   height: 100%;

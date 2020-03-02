@@ -356,7 +356,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" >
 .imgs {
   height: 41px;
   width: 100%;

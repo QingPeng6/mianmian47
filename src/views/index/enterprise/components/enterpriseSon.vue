@@ -128,7 +128,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .el-dialog--center {
   width: 600px !important;
 }

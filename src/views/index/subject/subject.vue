@@ -255,7 +255,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped> 
 .box-card {
   margin-bottom: 20px;
 }

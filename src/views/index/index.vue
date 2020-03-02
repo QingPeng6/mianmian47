@@ -181,7 +181,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" >
 .my-container {
   height: 100%;
   //   .my-header {

@@ -26,8 +26,12 @@
         <el-form-item>
           <el-button type="primary" @click="searchX">搜索</el-button>
           <el-button @click="clearX">清除</el-button>
-          <el-button type="primary" icon="el-icon-plus" @click="addE"
-           v-if="['超级管理员','管理员','老师'].includes($store.state.role)" >新增企业</el-button
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            @click="addE"
+            v-if="['超级管理员', '管理员', '老师'].includes($store.state.role)"
+            >新增企业</el-button
           >
         </el-form-item>
       </el-form>
@@ -256,7 +260,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .box-card {
   margin-bottom: 20px;
 }

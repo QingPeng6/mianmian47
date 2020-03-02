@@ -1,5 +1,5 @@
 <template>
-  <div>我是数据概览</div>
+  <div></div>
 </template>
 
 <script>
@@ -26,4 +26,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style></style>

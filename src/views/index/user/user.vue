@@ -233,7 +233,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .box-card {
   margin-bottom: 20px;
 }
