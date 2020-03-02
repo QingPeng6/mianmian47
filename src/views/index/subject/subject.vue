@@ -26,7 +26,11 @@
         <el-form-item>
           <el-button type="primary" @click="searchX">搜索</el-button>
           <el-button @click="clearX">清除</el-button>
-          <el-button type="primary" icon="el-icon-plus" @click="addSon"
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            @click="addSon"
+            v-if="['超级管理员', '管理员', '老师'].includes($store.state.role)"
             >新增学科</el-button
           >
         </el-form-item>
@@ -57,7 +61,11 @@
           </template>
         </el-table-column>
 
-        <el-table-column fixed="right" label="操作">
+        <el-table-column
+          fixed="right"
+          label="操作"
+          v-if="['超级管理员', '管理员', '老师'].includes($store.state.role)"
+        >
           <template slot-scope="scope">
             <el-button @click="editSub(scope.row)" type="text" size="small"
               >编辑</el-button
@@ -65,7 +73,11 @@
             <el-button type="text" size="small" @click="change(scope.row.id)">{{
               scope.row.status === 1 ? "禁用" : "启用"
             }}</el-button>
-            <el-button type="text" size="small" @click="remove(scope.row.id)"
+            <el-button
+              type="text"
+              size="small"
+              @click="remove(scope.row.id)"
+              v-if="['超级管理员', '管理员'].includes($store.state.role)"
               >删除</el-button
             >
           </template>
