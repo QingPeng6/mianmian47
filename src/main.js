@@ -1,6 +1,13 @@
 import Vue from 'vue'
 import App from './App.vue'
 
+//注册全局组件
+import subjectSelect from './components/subjectSelect.vue'
+Vue.component('subjectSelect',subjectSelect)
+//注册全局组件
+import enterpriseSelect from './components/enterpriseSelect.vue'
+Vue.component('enterpriseSelect',enterpriseSelect)
+
 //导入全局过滤器
 import './filters/filters'
 

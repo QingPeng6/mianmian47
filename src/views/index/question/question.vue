@@ -8,14 +8,15 @@
         class="demo-form-inline"
       >
         <el-form-item label="学科" prop="subject">
-          <el-select v-model="formInline.subject">
+          <!-- <el-select v-model="formInline.subject">
             <el-option
               :label="item.name"
               :value="item.rid"
               v-for="(item, index) in this.subjectlist"
               :key="index"
             ></el-option>
-          </el-select>
+          </el-select> -->
+          <subjectSelect v-model="formInline.subject"></subjectSelect>
         </el-form-item>
 
         <el-form-item label="阶段" prop="step">
@@ -27,14 +28,15 @@
         </el-form-item>
 
         <el-form-item label="企业" prop="enterprise">
-          <el-select v-model="formInline.enterprise">
+          <!-- <el-select v-model="formInline.enterprise">
             <el-option
               :label="item.name"
               :value="item.eid"
               v-for="(item, index) in this.enterpriselist"
               :key="index"
             ></el-option>
-          </el-select>
+          </el-select> -->
+          <enterpriseSelect v-model="formInline.enterprise" />
         </el-form-item>
 
         <el-form-item label="题型" prop="type">
@@ -141,17 +143,21 @@
         :total="total"
       ></el-pagination>
     </el-card>
+
+    <queSon />
   </div>
 </template>
 
 <script>
 //获取学科
-import { get_subject } from "@/api/subject.js";
-//获取企业
-import { get_enterprise } from "@/api/enterprise.js";
+// import { get_subject } from "@/api/subject.js";
+// //获取企业
+// import { get_enterprise } from "@/api/enterprise.js";
 
 //获取题目
 import { get_question } from "@/api/question.js";
+
+import queSon from "./componets/questionSon";
 export default {
   name: "question",
   props: {},
@@ -216,15 +222,16 @@ export default {
   },
   //进入页面就执行的生命周期,可以访问dom
   created() {
-    get_subject().then(res => {
-      console.log("学科数据:", res);
-      this.subjectlist = res.data.data.items;
-    });
+    // get_subject().then(res => {
+    //   console.log("学科数据:", res);
+    //   this.subjectlist = res.data.data.items;
+    // });
 
-    get_enterprise().then(res => {
-      console.log("企业数据:", res);
-      this.enterpriselist = res.data.data.items;
-    });
+    // // 获取启用企业
+    // get_enterprise({ status: 1 }).then(res => {
+    //   console.log("企业数据:", res);
+    //   this.enterpriselist = res.data.data.items;
+    // });
 
     // get_question({ page: this.page, limit: this.size }).then(res => {
     //   console.log("题目列表", res);
@@ -238,31 +245,35 @@ export default {
   //侦听器
   watch: {},
   //子页面
-  components: {}
+  components: {
+    queSon
+  }
 };
 </script>
 
 <style lang="less" scoped>
 .question {
-  .el-form-item:not(:last-child) .el-form-item__content {
-    width: 200px;
-  }
+  .el-form--inline {
+    // .el-form-item:not(:last-child) .el-form-item__content {
+    //   width: 200px;
+    // }
 
-  .input1 {
-    width: 500px;
-  }
-  .el-card__body:first-of-type {
-    padding: 20px 0px;
-  }
+    .input1 {
+      width: 500px;
+    }
+    .el-card__body:first-of-type {
+      padding: 20px 0px;
+    }
 
-  // .el-form-item:last-of-type {
-  //   margin-left: 320px;
-  // }
-  .inputUser {
-    width: 217px;
+    // .el-form-item:last-of-type {
+    //   margin-left: 320px;
+    // }
+    .inputUser {
+      width: 217px;
+    }
   }
   .box2 {
-    margin-top: 20px;
+    margin-top: 20px !important;
     padding: 20px;
   }
 
@@ -270,5 +281,6 @@ export default {
     text-align: center;
     margin-top: 20px;
   }
+  
 }
 </style>
