@@ -52,7 +52,21 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-divider></el-divider>
+        <el-form-item class="xianxian">
+          <el-divider></el-divider>
+        </el-form-item>
+
+        <el-form-item
+          class="stbt"
+          label="试题标题"
+          :label-width="formLabelWidth"
+        >
+          <myEdtior class="editor" v-model="form.title" />
+        </el-form-item>
+
+        <el-form-item label="单选" :label-width="formLabelWidth">
+         
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -66,6 +80,7 @@
 
 <script>
 import citySon from "./citySon";
+import myEdtior from "./myEdtior";
 // import { regionDataPlus } from "element-china-area-data";
 export default {
   name: "queSon",
@@ -93,7 +108,8 @@ export default {
   watch: {},
   //子页面
   components: {
-    citySon
+    citySon,
+    myEdtior
   }
 };
 </script>
@@ -101,9 +117,28 @@ export default {
 <style lang="less">
 .boxque {
   .el-form {
-    margin-left: 300px;
-    width: 1200px;
+    margin-left: 100px;
+    width: 840px;
     height: 1000px;
+
+    .xianxian {
+      width: 840px;
+      margin-left: 300px;
+    }
+    .stbt {
+      .el-form-item__label {
+        margin-left: 30px;
+      }
+    }
+    .editor {
+      width: 840px;
+      // margin-left: 300px;
+
+      margin-top: 80px;
+      margin-left: -80px;
+    }
+
+  
   }
 
   .el-select {

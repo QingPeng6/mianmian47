@@ -22,3 +22,7 @@ i {
 li {
     list-style: none
 }
+
+.el-icon-close::before {
+    color: #fff !important;
+  }

@@ -94,7 +94,11 @@
     <el-card class="box-card box2">
       <el-table border :data="tableData" style="width: 100%">
         <el-table-column type="index" label="序号"> </el-table-column>
-        <el-table-column prop="title" label="题目"> </el-table-column>
+        <el-table-column label="题目">
+          <template slot-scope="scope">
+            <p v-html="scope.row.title"></p>
+          </template>
+        </el-table-column>
         <el-table-column prop="name" label="学科:阶段">
           <template slot-scope="scope">
             <!-- {{ scope.row.subject_name }}·
@@ -158,6 +162,7 @@
 import { get_question } from "@/api/question.js";
 
 import queSon from "./componets/questionSon";
+
 export default {
   name: "question",
   props: {},
@@ -281,6 +286,5 @@ export default {
     text-align: center;
     margin-top: 20px;
   }
-  
 }
 </style>
