@@ -84,7 +84,9 @@
         <el-form-item>
           <el-button type="primary">搜索</el-button>
           <el-button>清除</el-button>
-          <el-button type="primary" icon="el-icon-plus">新增试题</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="goSon"
+            >新增试题</el-button
+          >
         </el-form-item>
       </el-form>
     </el-card>
@@ -148,7 +150,7 @@
       ></el-pagination>
     </el-card>
 
-    <queSon />
+    <queSon ref="queSon" />
   </div>
 </template>
 
@@ -180,6 +182,10 @@ export default {
   },
   //方法
   methods: {
+    //前往子页面新增题目
+    goSon() {
+      this.$refs.queSon.dialogFormVisible = true;
+    },
     //时间点击事件
     okdate() {
       console.log(this.formInline.create_date);

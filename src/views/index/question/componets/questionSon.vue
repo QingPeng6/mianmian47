@@ -6,7 +6,7 @@
       title="新增题库"
       :visible.sync="dialogFormVisible"
     >
-      <el-form :model="form">
+      <el-form :model="form" :rules="rules">
         <el-form-item label="学科" prop="subject" :label-width="formLabelWidth">
           <subjectSelect v-model="form.subject"></subjectSelect>
         </el-form-item>
@@ -27,7 +27,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="城市" prop="step" :label-width="formLabelWidth">
+        <el-form-item label="城市" prop="city" :label-width="formLabelWidth">
           <!-- <el-cascader
               v-model="value"
               :options="options"
@@ -36,16 +36,16 @@
           <citySon v-model="form.city" />
         </el-form-item>
 
-        <el-form-item label="题型" :label-width="formLabelWidth">
-          <el-radio-group v-model="form.abc">
+        <el-form-item label="题型" prop="type" :label-width="formLabelWidth">
+          <el-radio-group v-model="form.type">
             <el-radio label="单选"></el-radio>
             <el-radio label="多选"></el-radio>
             <el-radio label="简答"></el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="难度" :label-width="formLabelWidth">
-          <el-radio-group v-model="form.resource">
+        <el-form-item label="难度" prop="difficulty" :label-width="formLabelWidth">
+          <el-radio-group v-model="form.difficulty">
             <el-radio label="简单"></el-radio>
             <el-radio label="一般"></el-radio>
             <el-radio label="困难"></el-radio>
@@ -65,7 +65,6 @@
         </el-form-item>
 
         <el-form-item label="单选" :label-width="formLabelWidth">
-         
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -89,9 +88,17 @@ export default {
   data() {
     return {
       form: {},
-      dialogFormVisible: true,
-      formLabelWidth: "380px"
+      dialogFormVisible: false,
+      formLabelWidth: "380px",
       // options: regionDataPlus
+      rules: {
+        subject: [{ required: true, message: "请输入", trigger: "blur" }],
+        step: [{ required: true, message: "请输入", trigger: "blur" }],
+        city: [{ required: true, message: "请输入", trigger: "blur" }],
+        enterprise: [{ required: true, message: "请输入", trigger: "blur" }],
+        difficulty: [{ required: true, message: "请输入", trigger: "blur" }],
+        type:[{ required: true, message: "请输入", trigger: "blur" }],
+      }
     };
   },
   //方法
@@ -116,6 +123,10 @@ export default {
 
 <style lang="less">
 .boxque {
+  .el-dialog__footer {
+    text-align: center;
+    margin-left: 500px;
+  }
   .el-form {
     margin-left: 100px;
     width: 840px;
@@ -137,8 +148,6 @@ export default {
       margin-top: 80px;
       margin-left: -80px;
     }
-
-  
   }
 
   .el-select {
