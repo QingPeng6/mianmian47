@@ -24,7 +24,7 @@ export function one_question(data) {
 
 //修改状态
 
-export function change_enterprise(data) {
+export function change_question(data) {
 
     return requestQ({
         url: '/question/status',
