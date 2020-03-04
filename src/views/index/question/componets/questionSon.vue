@@ -44,7 +44,11 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="难度" prop="difficulty" :label-width="formLabelWidth">
+        <el-form-item
+          label="难度"
+          prop="difficulty"
+          :label-width="formLabelWidth"
+        >
           <el-radio-group v-model="form.difficulty">
             <el-radio label="简单"></el-radio>
             <el-radio label="一般"></el-radio>
@@ -60,11 +64,12 @@
           class="stbt"
           label="试题标题"
           :label-width="formLabelWidth"
+          prop="title"
         >
           <myEdtior class="editor" v-model="form.title" />
         </el-form-item>
 
-        <el-form-item label="单选" :label-width="formLabelWidth">
+        <el-form-item :label="form.type" :label-width="formLabelWidth">
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -97,7 +102,8 @@ export default {
         city: [{ required: true, message: "请输入", trigger: "blur" }],
         enterprise: [{ required: true, message: "请输入", trigger: "blur" }],
         difficulty: [{ required: true, message: "请输入", trigger: "blur" }],
-        type:[{ required: true, message: "请输入", trigger: "blur" }],
+        type: [{ required: true, message: "请输入", trigger: "blur" }],
+        title: [{ required: true, message: "请输入", trigger: "blur" }]
       }
     };
   },
