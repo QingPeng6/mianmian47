@@ -82,8 +82,8 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
-          <el-button>清除</el-button>
+          <el-button type="primary" @click="searchX">搜索</el-button>
+          <el-button  @click="clearX">清除</el-button>
           <el-button type="primary" icon="el-icon-plus" @click="goSon"
             >新增试题</el-button
           >
@@ -123,17 +123,23 @@
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <!--三元表达式判断 -->
-            {{ scope.row.status == 1 ? "启用" : "禁用" }}
+            <!-- {{ scope.row.status == 1 ? "启用" : "禁用" }} -->
+            <span v-if="scope.row.status == 1">启用</span>
+            <span v-else style="color:red">禁用</span>
           </template>
         </el-table-column>
         <el-table-column prop="reads" label="访问量"></el-table-column>
         <el-table-column fixed="right" label="操作">
-          <template>
-            <el-button type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small">
-              禁用
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="edit(scope.row)"
+              >编辑</el-button
+            >
+            <el-button type="text" size="small" @click="change(scope.row.id)"
+              >{{ scope.row.status === 1 ? "禁用" : "启用" }}
             </el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" @click="remove(scope.row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -161,7 +167,11 @@
 // import { get_enterprise } from "@/api/enterprise.js";
 
 //获取题目
-import { get_question } from "@/api/question.js";
+import {
+  get_question,
+  change_enterprise,
+  remove_question
+} from "@/api/question.js";
 
 import queSon from "./componets/questionSon";
 
@@ -171,6 +181,7 @@ export default {
   //数据
   data() {
     return {
+      oldItem: "",
       page: 1, //页码
       size: 5, //页容量
       total: 0, //总条
@@ -182,8 +193,60 @@ export default {
   },
   //方法
   methods: {
+      //清除学科搜索
+    clearX() {
+      this.page = 1; //搜索第一页的数据
+      this.$refs.formInline.resetFields(); //清空搜索表单内容,需要加prop值,否则无效
+      this.post_question(); //清空表单后再搜索获取学科数据
+    },
+    //搜索学科事件
+    searchX() {
+      this.page = 1; //搜索第一页的数据
+      this.post_question();
+    },
+    // 修改题目
+    edit(item) {
+      this.$refs.queSon.isAdd = false;
+      this.$refs.queSon.dialogFormVisible = true;
+
+      if (item != this.oldItem) {
+        this.$refs.queSon.form = { ...item };
+        this.$refs.queSon.form.city = this.$refs.queSon.form.city.split(",");
+        // console.log(this.$refs.queSon.form);
+        this.oldItem = item;
+      } else {
+        this.$refs.queSon.form = { ...this.oldItem };
+      }
+    },
+    //删除题目
+    remove(id) {
+      if (this.tableData.length == 1) {
+        this.page--;
+      }
+      if (this.page == 0) {
+        this.page = 1;
+      }
+      remove_question({ id }).then(res => {
+        console.log("题目删除:", res);
+        if (res.data.code == 200) {
+          this.post_question(); //重新获取数据
+          this.$message.success("删除成功");
+        }
+      });
+    },
+    //修改状态
+    change(id) {
+      change_enterprise({ id }).then(res => {
+        console.log("题目状态修改结果:", res);
+        if (res.data.code == 200) {
+          this.post_question({ page: this.page, limit: this.size });
+          this.$message.success("状态更改成功");
+        }
+      });
+    },
     //前往子页面新增题目
     goSon() {
+      this.$refs.queSon.isAdd = true;
       this.$refs.queSon.dialogFormVisible = true;
     },
     //时间点击事件

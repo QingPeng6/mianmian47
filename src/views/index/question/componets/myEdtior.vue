@@ -37,6 +37,7 @@ export default {
       this.$emit("input", html); 
     };
     editor1.create();
+    editor1.txt.html(this.value)
   },
   //侦听器
   watch: {},

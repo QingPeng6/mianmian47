@@ -3,7 +3,7 @@
     <el-select v-model="subject" @change="selChange">
       <el-option
         :label="item.name"
-        :value="item.rid"
+        :value="item.id"
         v-for="(item, index) in this.subjectlist"
         :key="index"
       ></el-option>
@@ -29,9 +29,9 @@ export default {
   },
   //方法
   methods: {
-      selChange(){
-          this.$emit('input',this.subject)
-      }
+    selChange() {
+      this.$emit("input", this.subject);
+    }
   },
   //计算属性
   computed: {},
@@ -47,7 +47,11 @@ export default {
   //渲染页面后执行的生命周期,不能访问dom
   mounted() {},
   //侦听器
-  watch: {},
+  watch: {
+    value(val) {
+      this.subject = val;
+    }
+  },
   //子页面
   components: {}
 };
