@@ -2,9 +2,9 @@
   <div>
     <div id="div1" class="toolbar" ref="toolbar"></div>
 
-    <div id="div2" class="text" ref="text">
+    <div id="div2" class="text" ref="text" placeholder="请输入内容">
+      <p>{{ value }}</p>
       <!--可使用 min-height 实现编辑区域自动增加高度-->
-    
     </div>
   </div>
 </template>
@@ -34,7 +34,7 @@ export default {
 
     editor1.customConfig.onchange = html => {
       //   console.log("触发了" + html);
-      this.$emit("input", html); 
+      this.$emit("input", html);
     };
     editor1.create();
   },

@@ -1,9 +1,10 @@
 <template>
   <div>
     <el-select v-model="enterprise" @change="selChange">
+      <el-option v-if="fa" value="">所有企业</el-option>
       <el-option
         :label="item.name"
-        :value="item.eid"
+        :value="item.id"
         v-for="(item, index) in this.enterpriselist"
         :key="index"
       ></el-option>
@@ -16,8 +17,10 @@
 import { get_enterprise } from "@/api/enterprise.js";
 export default {
   props: {
-    value: {
-  
+    value: {},
+    fa: {
+      type: Boolean,
+      default: true
     }
   },
   //数据
@@ -29,9 +32,9 @@ export default {
   },
   //方法
   methods: {
-      selChange(){
-          this.$emit('input',this.enterprise)
-      }
+    selChange() {
+      this.$emit("input", this.enterprise);
+    }
   },
   //计算属性
   computed: {},
@@ -39,18 +42,20 @@ export default {
   filters: {},
   //进入页面就执行的生命周期,可以访问dom
   created() {
-  
     // 获取启用企业
     get_enterprise({ status: 1 }).then(res => {
       console.log("企业数据:", res);
       this.enterpriselist = res.data.data.items;
     });
-
   },
   //渲染页面后执行的生命周期,不能访问dom
   mounted() {},
   //侦听器
-  watch: {},
+  watch: {
+    value(val) {
+      this.enterprise = val;
+    }
+  },
   //子页面
   components: {}
 };

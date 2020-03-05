@@ -16,11 +16,15 @@
               :key="index"
             ></el-option>
           </el-select> -->
-          <subjectSelect v-model="formInline.subject"></subjectSelect>
+          <subjectSelect
+            :fa="true"
+            v-model="formInline.subject"
+          ></subjectSelect>
         </el-form-item>
 
         <el-form-item label="阶段" prop="step">
           <el-select v-model="formInline.step">
+            <el-option label="所有阶段" value=""></el-option>
             <el-option label="初级" value="1"></el-option>
             <el-option label="中级" value="2"></el-option>
             <el-option label="高级" value="3"></el-option>
@@ -36,11 +40,12 @@
               :key="index"
             ></el-option>
           </el-select> -->
-          <enterpriseSelect v-model="formInline.enterprise" />
+          <enterpriseSelect :fa="true" v-model="formInline.enterprise" />
         </el-form-item>
 
         <el-form-item label="题型" prop="type">
           <el-select v-model="formInline.type">
+            <el-option label="所有题型" value=""></el-option>
             <el-option label="单选" value="1"></el-option>
             <el-option label="多选" value="2"></el-option>
             <el-option label="简答" value="3"></el-option>
@@ -49,6 +54,7 @@
         <br />
         <el-form-item label="难度" prop="difficulty">
           <el-select v-model="formInline.difficulty">
+            <el-option label="所有难度" value=""></el-option>
             <el-option label="简单" value="1"></el-option>
             <el-option label="一般" value="2"></el-option>
             <el-option label="困难" value="3"></el-option>
@@ -82,8 +88,8 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
-          <el-button>清除</el-button>
+          <el-button type="primary" @click="souS">搜索</el-button>
+          <el-button @click="clearS">清除</el-button>
           <el-button type="primary" icon="el-icon-plus" @click="goSon"
             >新增试题</el-button
           >
@@ -123,17 +129,22 @@
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <!--三元表达式判断 -->
-            {{ scope.row.status == 1 ? "启用" : "禁用" }}
+            <span v-if="scope.row.status == 1">启用</span>
+            <span v-else style="color:red">禁用</span>
           </template>
         </el-table-column>
         <el-table-column prop="reads" label="访问量"></el-table-column>
         <el-table-column fixed="right" label="操作">
-          <template>
-            <el-button type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="editS(scope.row)"
+              >编辑</el-button
+            >
+            <el-button type="text" size="small" @click="statsXG(scope.row.id)">
               禁用
             </el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" @click="clear(scope.row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -161,7 +172,11 @@
 // import { get_enterprise } from "@/api/enterprise.js";
 
 //获取题目
-import { get_question } from "@/api/question.js";
+import {
+  get_question,
+  remove_question,
+  change_question
+} from "@/api/question.js";
 
 import queSon from "./componets/questionSon";
 
@@ -171,6 +186,7 @@ export default {
   //数据
   data() {
     return {
+      oldItem: "", //判断是新增还是编辑
       page: 1, //页码
       size: 5, //页容量
       total: 0, //总条
@@ -182,6 +198,57 @@ export default {
   },
   //方法
   methods: {
+    //编辑题目
+    editS(item) {
+      console.log("当前点击行的数据:", item);
+      this.$refs.queSon.isAdd = false;
+      this.$refs.queSon.dialogFormVisible = true;
+
+      if (item != this.oldItem) {
+        this.$refs.queSon.form = { ...item };
+        this.oldItem = item;
+        this.$refs.queSon.form.city = this.$refs.queSon.form.city.split(",");
+      }
+    },
+    //清除搜索
+    clearS() {
+      this.page = 1;
+      this.$refs.formInline.resetFields(); //清空搜索表单内容,需要加prop值,否则无效
+      this.post_question(); //重新获取数据
+    },
+    //搜索题目
+    souS() {
+      this.page = 1;
+      this.post_question(); //重新获取数据
+    },
+    //修改状态
+    statsXG(id) {
+      change_question({ id }).then(res => {
+        console.log("学科状态修改结果:", res);
+        if (res.data.code == 200) {
+          this.post_question({ page: this.page, limit: this.size });
+          this.$message.success("状态更改成功");
+        }
+      });
+    },
+    //删除题目
+    clear(id) {
+      console.log("当前删除行数据,", id);
+      //判断如果当前删除的是当前页码的最后一个数据,删除完后就让页码返回上一页
+      if (this.tableData.length == 1) {
+        this.page--;
+      }
+      if (this.page == 0) {
+        this.page = 1;
+      }
+      remove_question({ id }).then(res => {
+        console.log("学科删除:", res);
+        if (res.data.code == 200) {
+          this.post_question(); //重新获取数据
+          this.$message.success("删除成功");
+        }
+      });
+    },
     //前往子页面新增题目
     goSon() {
       this.$refs.queSon.dialogFormVisible = true;
@@ -190,11 +257,17 @@ export default {
     okdate() {
       console.log(this.formInline.create_date);
     },
-    handleSizeChange() {
+    handleSizeChange(val) {
       //页容量点击事件
+      this.size = val;
+      this.page = 1; //页码回到第一页
+      this.post_question();
     },
-    handleCurrentChange() {
+    handleCurrentChange(val) {
       //页码点击事件
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.post_question();
     },
     //获取题目
     post_question() {
